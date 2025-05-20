@@ -1,0 +1,37 @@
+{
+  "name": "byokai-kit",
+  "version": "0.1.2",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "module": "dist/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "openai",
+    "api key",
+    "client",
+    "frontend",
+    "ai",
+    "utils"
+  ],
+  "author": "Marcio",
+  "license": "MIT",
+  "peerDependencies": {
+    "react": ">=17.0.0 <20.0.0",
+    "react-dom": ">=17.0.0 <20.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.4"
+  }
+}
