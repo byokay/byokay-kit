@@ -5,9 +5,9 @@ interface KeyInputFieldProps {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
-  isInvalid?: boolean; // For actual invalid keys (not CORS)
+  isInvalid?: boolean; // For actual invalid keys (e.g., 401 response)
   isUnverified?: boolean; // For CORS unverified keys
-  feedbackMessage?: string; // General message (could be error or CORS info)
+  feedbackMessage?: string; // For specific error/info messages
 }
 
 export function KeyInputField({
@@ -19,60 +19,50 @@ export function KeyInputField({
   feedbackMessage,
 }: KeyInputFieldProps) {
   const [showTooltip, setShowTooltip] = useState(false);
+  const [showUnverifiedTooltip, setShowUnverifiedTooltip] = useState(false);
   const [showKey, setShowKey] = useState(false);
 
   const toggleShowKey = () => setShowKey((prev) => !prev);
 
   let borderColor = "border-gray-300 focus:border-blue-500";
   let ringColor = "focus:ring-blue-500";
-  let iconToShow: React.ReactNode = null;
-  let tooltipText = feedbackMessage;
+  let statusIcon: React.ReactNode = null;
+  let statusIconTooltipText = feedbackMessage;
 
   if (isInvalid) {
     // Hard invalid
     borderColor = "border-red-400 focus:border-red-500";
     ringColor = "focus:ring-red-500";
-    iconToShow = // Heroicon: x-circle
-      (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-5 w-5 text-red-500"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth={2}
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-          />
-        </svg>
-      );
-    if (!tooltipText) tooltipText = "Invalid API Key.";
+    statusIcon = (
+      /* Red X Circle Icon */
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-5 w-5 text-red-500"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        strokeWidth={2}
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+        />
+      </svg>
+    );
+    if (!statusIconTooltipText) statusIconTooltipText = "Invalid API Key.";
   } else if (isUnverified) {
-    // CORS unverified
-    borderColor = "border-yellow-400 focus:border-yellow-500"; // Amber/yellow for unverified
-    ringColor = "focus:ring-yellow-500";
-    iconToShow = // Heroicon: information-circle
-      (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-5 w-5 text-yellow-500"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth={2}
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-          />
-        </svg>
-      );
-    // Tooltip text will be the CORS message passed via feedbackMessage
+    // For CORS unverified, we DON'T want an aggressive error icon or border here.
+    // The info icon will be next to the provider name in ProviderStatus.
+    // The input field can remain neutral or have a very subtle indication if desired.
+    // For now, let's keep it neutral to avoid "aggressive" warning.
+    // If you wanted a subtle indication here, it could be a different icon or just a tooltip on a generic icon.
+    // For now, no specific icon IN the input for isUnverified to keep it clean.
+    // The textual message below the input (in ProviderRow) will be the main indicator here.
   }
+
+  const hasStatusIcon = !!statusIcon || !!isUnverified;
+  const hasValue = !!value;
 
   return (
     <div className="relative flex items-center w-full">
@@ -83,18 +73,18 @@ export function KeyInputField({
         placeholder={placeholder}
         className={`w-full px-3 py-2 text-sm border rounded-lg focus:ring-1 focus:outline-none transition-all 
           ${borderColor} ${ringColor}
-          ${iconToShow || value ? "pr-10" : ""} 
+          ${hasValue || hasStatusIcon ? "pr-10" : ""} 
         `}
-        aria-invalid={isInvalid}
+        aria-invalid={isInvalid} // Only true for hard invalid
       />
 
-      {/* Show/hide eye toggle */}
-      {value && (
+      {/* Eye toggle: Adjust position based on whether statusIcon is present */}
+      {hasValue && (
         <button
           type="button"
           onClick={toggleShowKey}
           className={`absolute inset-y-0 ${
-            iconToShow ? "right-8" : "right-0"
+            hasStatusIcon ? "right-8" : "right-0" // Shift left if status icon is present
           } pr-3 flex items-center text-gray-500 hover:text-gray-700 focus:outline-none`}
           title={showKey ? "Hide API key" : "Show API key"}
         >
@@ -140,17 +130,48 @@ export function KeyInputField({
         </button>
       )}
 
-      {/* Validation status icon with tooltip */}
-      {iconToShow && (
+      {/* Validation status icons */}
+      {/* Invalid Key Error Icon */}
+      {isInvalid && statusIcon && (
         <div
           className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-help"
           onMouseEnter={() => setShowTooltip(true)}
           onMouseLeave={() => setShowTooltip(false)}
         >
-          {iconToShow}
-          {showTooltip && tooltipText && (
+          {statusIcon}
+          {showTooltip && statusIconTooltipText && (
             <div className="absolute left-1/2 bottom-full transform -translate-x-1/2 mb-2 w-max max-w-xs px-3 py-1.5 bg-gray-800 text-white text-xs rounded-md shadow-lg z-20">
-              {tooltipText}
+              {statusIconTooltipText}
+              <div className="absolute left-1/2 top-full transform -translate-x-1/2 w-2 h-2 bg-gray-800 rotate-45"></div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Unverified/CORS Info Icon */}
+      {hasValue && isUnverified && (
+        <div
+          className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-help"
+          onMouseEnter={() => setShowUnverifiedTooltip(true)}
+          onMouseLeave={() => setShowUnverifiedTooltip(false)}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5 text-gray-500"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          {showUnverifiedTooltip && feedbackMessage && (
+            <div className="absolute left-1/2 bottom-full transform -translate-x-1/2 mb-2 w-max max-w-xs px-3 py-1.5 bg-gray-800 text-white text-xs rounded-md shadow-lg z-20">
+              {feedbackMessage}
               <div className="absolute left-1/2 top-full transform -translate-x-1/2 w-2 h-2 bg-gray-800 rotate-45"></div>
             </div>
           )}

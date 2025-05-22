@@ -67,32 +67,15 @@ export function KeyManagerContent({
           onClear={onClear}
         />
       </div>
-      {/* Footer section containing all actions */}
-      <div className="mt-auto px-0 pt-3 border-t border-gray-100">
-        {/* This actions bar will be the new "footer" content provided by KeyManagerContent */}
-        <div className="flex justify-between items-center mt-4 pt-4 border-t border-gray-200">
-          <ClearAllSection
-            hasKeys={hasAnyEnteredKeys}
-            isConfirming={confirmingClearAll}
-            onStartClear={handleStartClearAll}
-            onConfirmClear={handleConfirmClearAllAndReset}
-            onCancelClear={handleCancelClearAll}
-          />
-          <div className="flex space-x-3">
-            <button
-              onClick={onCancel}
-              className="px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={onSaveAllAndClose}
-              className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              Save
-            </button>
-          </div>
-        </div>
+      {/* Footer with ClearAllSection - single line separator */}
+      <div>
+        <ClearAllSection
+          hasKeys={hasAnyEnteredKeys}
+          isConfirming={confirmingClearAll}
+          onStartClear={handleStartClearAll}
+          onConfirmClear={handleConfirmClearAllAndReset}
+          onCancelClear={handleCancelClearAll}
+        />
       </div>
     </div>
   );

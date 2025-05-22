@@ -2,8 +2,10 @@
 import { SupportedProvider } from "./ByokayKeyManager"; // Ensure this path and type name are correct
 import { validateOpenAIApiKey } from "./validators/openaiValidator";
 import { validateClaudeApiKey } from "./validators/claudeValidator";
+import { validateGeminiApiKey } from "./validators/geminiValidator";
+import { validateDeepSeekApiKey } from "./validators/deepseekValidator"; // Import new validator
 // Import other validators as you create them:
-// import { validateGeminiApiKey } from "./validators/geminiValidator";
+// import { validateGrokApiKey } from "./validators/grokValidator";
 
 export async function validateApiKey(
   provider: SupportedProvider,
@@ -32,11 +34,21 @@ export async function validateApiKey(
         message: claudeResult.message,
         isCorsError: claudeResult.isCorsError,
       };
-    // case "gemini":
-    //   // const geminiResult = await validateGeminiApiKey(apiKey);
-    //   // return { isValid: geminiResult.success, message: geminiResult.message, isCorsError: geminiResult.isCorsError };
-    //   break;
-    // Add cases for grok, deepseek, llama as you implement them
+    case "gemini": // Add case for Gemini
+      const geminiResult = await validateGeminiApiKey(apiKey);
+      return {
+        isValid: geminiResult.success,
+        message: geminiResult.message,
+        isCorsError: geminiResult.isCorsError,
+      };
+    case "deepseek": // Add case for DeepSeek
+      const deepseekResult = await validateDeepSeekApiKey(apiKey);
+      return {
+        isValid: deepseekResult.success,
+        message: deepseekResult.message,
+        isCorsError: deepseekResult.isCorsError,
+      };
+    // Add cases for grok, llama as you implement them
     default:
       console.warn(
         `Real validation for ${provider} is not implemented. Simulating success for now.`

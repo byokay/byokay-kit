@@ -5,8 +5,7 @@ interface ProviderActionsProps {
   isValidated: boolean;
   isSaved: boolean;
   isValidating: boolean;
-  isExplicitlyInvalid?: boolean;
-  isUnverified?: boolean;
+  isUnverified?: boolean; // For CORS unverified state
   onValidate: () => void;
   onClear: () => void;
 }
@@ -16,7 +15,6 @@ export function ProviderActions({
   isValidated,
   isSaved,
   isValidating,
-  isExplicitlyInvalid,
   isUnverified,
   onValidate,
   onClear,
@@ -30,23 +28,8 @@ export function ProviderActions({
     setIsConfirmingDelete(false);
   };
 
-  // Handle button click based on validation state
-  const handleMainButtonClick = () => {
-    if (isExplicitlyInvalid) {
-      // If invalid, clear the key
-      onClear();
-    } else {
-      // Otherwise validate
-      onValidate();
-    }
-  };
-
-  const isTrulyInvalid =
-    !isValidated &&
-    !isUnverified &&
-    hasKey &&
-    !isValidating &&
-    isExplicitlyInvalid;
+  const isTrulyInvalidAndKeyPresent =
+    hasKey && !isValidated && !isUnverified && !isValidating;
 
   if (isSaved) {
     return (
@@ -114,26 +97,22 @@ export function ProviderActions({
   return (
     <>
       <button
-        onClick={handleMainButtonClick}
+        onClick={onValidate}
         disabled={!hasKey || isValidating}
         className={`p-1.5 rounded transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 ${
           isValidated
-            ? "text-green-700 bg-green-50 hover:bg-green-100 focus-visible:ring-green-500" // Validated
-            : isUnverified
-            ? "text-yellow-700 bg-yellow-50 hover:bg-yellow-100 focus-visible:ring-yellow-500" // Unverified due to CORS
-            : isExplicitlyInvalid
-            ? "text-red-600 hover:text-red-700 hover:bg-red-50 focus-visible:ring-red-500" // Invalid
+            ? "text-green-700 bg-green-50 hover:bg-green-100 focus-visible:ring-green-500"
+            : isUnverified // Key saved, but unverified due to CORS
+            ? "text-gray-600 bg-gray-50 hover:bg-gray-100 focus-visible:ring-gray-500" // Neutral style
             : hasKey
-            ? "text-gray-600 hover:text-blue-700 hover:bg-blue-50 focus-visible:ring-blue-500" // Has key, not validated yet
-            : "text-gray-400 cursor-not-allowed" // No key
+            ? "text-gray-600 hover:text-blue-700 hover:bg-blue-50 focus-visible:ring-blue-500"
+            : "text-gray-400 cursor-not-allowed"
         }`}
         title={
           isValidated
             ? "Key is validated and saved"
             : isUnverified
-            ? "Saved. Browser verification skipped (CORS). Click to re-attempt."
-            : isExplicitlyInvalid
-            ? "Clear invalid key"
+            ? "Key saved. Click to re-attempt verification."
             : hasKey
             ? "Validate and save key"
             : "Enter a key to validate"
@@ -153,10 +132,10 @@ export function ProviderActions({
               d="M5 13l4 4L19 7"
             />
           </svg>
-        ) : isUnverified ? ( // Info Icon
+        ) : isUnverified ? ( // Info Icon for unverified
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5 text-yellow-600"
+            className="h-5 w-5 text-gray-600"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -168,23 +147,8 @@ export function ProviderActions({
               d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
             />
           </svg>
-        ) : isExplicitlyInvalid ? ( // X Circle for invalid
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5 stroke-red-600"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2}
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
         ) : (
-          // Default Check (not validated)
+          // Default Check (not validated, not unverified)
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-5 w-5 stroke-2 text-gray-500 group-hover:text-blue-600"

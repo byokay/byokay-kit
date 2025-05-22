@@ -122,23 +122,24 @@ export function useMultiApiKeys(initialProviders: SupportedProvider[]) {
       if (result.isValid) {
         handleSave(provider, key);
         setValidated((prev) => ({ ...prev, [provider]: true }));
+        setIsUnverifiedDueToCors((prev) => ({ ...prev, [provider]: false })); // Clear CORS flag
+        setValidationMessages((prev) => ({ ...prev, [provider]: null }));
       } else if (result.isCorsError) {
-        handleSave(provider, key); // Save the key as per your requirement
-        // validated remains false
-        setIsUnverifiedDueToCors((prev) => ({ ...prev, [provider]: true })); // Set specific CORS flag
+        handleSave(provider, key); // Save the key
+        setValidated((prev) => ({ ...prev, [provider]: false })); // Not API verified
+        setIsUnverifiedDueToCors((prev) => ({ ...prev, [provider]: true })); // Set CORS flag
         setValidationMessages((prev) => ({
           ...prev,
           [provider]: result.message,
-        }));
+        })); // Message for tooltip
       } else {
-        // Genuinely invalid or other error (not CORS related)
-        // validated remains false
-        // isUnverifiedDueToCors remains false
+        // Genuinely invalid or other error
+        setValidated((prev) => ({ ...prev, [provider]: false }));
+        setIsUnverifiedDueToCors((prev) => ({ ...prev, [provider]: false })); // Clear CORS flag
         setValidationMessages((prev) => ({
           ...prev,
           [provider]: result.message || "Invalid API key.",
         }));
-        // Do NOT save if confirmed invalid by API
       }
       setValidating((prev) => ({ ...prev, [provider]: false }));
     },
