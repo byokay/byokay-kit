@@ -58,8 +58,8 @@ export function ProviderRow({
             Saved!
           </span>
         ) : isValidating ? (
-          <span className="text-blue-600 text-xs bg-blue-50 py-1 px-2 rounded-full animate-pulse">
-            Validating...
+          <span className="text-blue-600 text-xs bg-blue-50 py-1 px-2 rounded-full w-16 text-center animate-pulse">
+            Validating
           </span>
         ) : (
           <>
