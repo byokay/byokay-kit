@@ -96,7 +96,7 @@ export function ProviderActions({
         disabled={!hasKey}
         className={`p-1.5 rounded transition-all ${
           isValidated
-            ? "text-green-700 bg-green-50"
+            ? "text-green-700 bg-green-50 hover:bg-green-100 hover:shadow-sm"
             : hasKey
             ? "text-gray-600 hover:text-green-700 hover:bg-green-50 hover:scale-110 hover:shadow-sm"
             : "text-gray-400 cursor-not-allowed"
