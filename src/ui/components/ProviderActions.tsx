@@ -108,7 +108,7 @@ export function ProviderActions({
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className={`h-5 w-5 ${
-            isValidated ? "stroke-[2.5]" : "stroke-2"
+            isValidated ? "stroke-green-600 stroke-[2.5]" : "stroke-2"
           } transition-all`}
           fill="none"
           viewBox="0 0 24 24"

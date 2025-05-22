@@ -14,12 +14,12 @@ export function ProviderStatus({
   return (
     <div
       className={`text-sm font-medium ${
-        hasKey && isValidated ? "text-green-700" : "text-gray-700"
+        hasKey && isValidated ? "text-green-600" : "text-gray-700"
       }`}
     >
       {name}
       {hasKey && isValidated && (
-        <span className="ml-1 inline-block w-2 h-2 bg-green-500 rounded-full"></span>
+        <span className="ml-1 inline-block w-2 h-2 bg-green-600 rounded-full"></span>
       )}
     </div>
   );

@@ -36,7 +36,7 @@ export function KeyInputField({ value, onChange }: KeyInputFieldProps) {
         placeholder="Enter API key"
         className={`w-full px-2 ${
           hasValue ? "pl-7" : "pl-2"
-        } py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none font-mono ${
+        } py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-green-600 focus:border-green-600 outline-none font-mono ${
           !hasValue && "placeholder:text-gray-300 placeholder:opacity-50"
         }`}
       />
