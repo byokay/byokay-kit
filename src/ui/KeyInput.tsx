@@ -114,6 +114,19 @@ export function KeyInput({ providers = ["openai"], className }: Props) {
     }, 1000);
   };
 
+  // Save all changes and close the dialog
+  const handleSaveAll = () => {
+    // Any keys that have been entered but not explicitly saved should be saved
+    Object.entries(keys).forEach(([provider, key]) => {
+      if (key && !validated[provider as SupportedProvider]) {
+        handleSave(provider as SupportedProvider, key);
+      }
+    });
+
+    // Close the dialog
+    setShowInput(false);
+  };
+
   return (
     <div className={className}>
       {!showInput ? (
@@ -275,12 +288,18 @@ export function KeyInput({ providers = ["openai"], className }: Props) {
                 ))}
               </div>
 
-              <div className="mt-4 pt-3 border-t border-gray-100 text-center">
+              <div className="mt-4 pt-3 border-t border-gray-100 flex justify-end space-x-3">
                 <button
                   onClick={() => setShowInput(false)}
+                  className="px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSaveAll}
                   className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
                 >
-                  Done
+                  Save
                 </button>
               </div>
             </div>
