@@ -11,12 +11,12 @@ const App = () => {
   return (
     <div
       style={{
-        padding: "1rem",
+        padding: "2rem",
         display: "flex",
         justifyContent: "flex-end",
       }}
     >
-      <KeyInput provider="openai" label="OpenAI API Key" />
+      <KeyInput providers={["openai", "claude", "gemini"]} />
     </div>
   );
 };
