@@ -36,31 +36,13 @@ export function KeyInput({ provider, label, className }: Props) {
       {!showInput ? (
         <button
           onClick={() => setShowInput(true)}
-          style={{
-            background: "transparent",
-            border: "none",
-            color: "#0070f3",
-            cursor: "pointer",
-            fontSize: "0.9rem",
-            textDecoration: "underline",
-          }}
+          className="bg-transparent border-none text-blue-600 cursor-pointer text-sm underline"
         >
           {key ? "🔒 Manage API Key" : "🔑 Set API Key"}
         </button>
       ) : (
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "0.5rem",
-            padding: "0.5rem",
-            border: "1px solid #ccc",
-            borderRadius: "6px",
-            background: "#fafafa",
-            maxWidth: "400px",
-          }}
-        >
-          <label style={{ fontSize: "0.85rem" }}>
+        <div className="flex flex-col gap-2 p-2 border border-gray-300 rounded-md bg-gray-50 max-w-[400px]">
+          <label className="text-sm">
             {label || `Your ${provider} API Key:`}
           </label>
           <input
@@ -68,58 +50,29 @@ export function KeyInput({ provider, label, className }: Props) {
             value={key}
             onChange={(e) => setKey(e.target.value)}
             placeholder={`Enter ${provider} key`}
-            style={{
-              padding: "0.5rem",
-              border: "1px solid #ccc",
-              borderRadius: "4px",
-              fontSize: "0.85rem",
-            }}
+            className="p-2 border border-gray-300 rounded-md text-sm"
           />
-          <div style={{ display: "flex", gap: "0.5rem" }}>
+          <div className="flex gap-2">
             <button
               onClick={handleSave}
-              style={{
-                background: "#0070f3",
-                color: "#fff",
-                border: "none",
-                borderRadius: "4px",
-                padding: "0.4rem 0.8rem",
-                cursor: "pointer",
-                fontSize: "0.85rem",
-              }}
+              className="bg-blue-600 text-white border-none rounded-md py-1.5 px-3 cursor-pointer text-sm"
             >
               Save
             </button>
             <button
               onClick={handleClear}
-              style={{
-                background: "#eaeaea",
-                border: "1px solid #ccc",
-                borderRadius: "4px",
-                padding: "0.4rem 0.8rem",
-                cursor: "pointer",
-                fontSize: "0.85rem",
-              }}
+              className="bg-gray-200 border border-gray-300 rounded-md py-1.5 px-3 cursor-pointer text-sm"
             >
               Clear
             </button>
             <button
               onClick={() => setShowInput(false)}
-              style={{
-                marginLeft: "auto",
-                background: "transparent",
-                border: "none",
-                color: "#999",
-                cursor: "pointer",
-                fontSize: "0.85rem",
-              }}
+              className="ml-auto bg-transparent border-none text-gray-500 cursor-pointer text-sm"
             >
               ✖
             </button>
           </div>
-          {saved && (
-            <span style={{ color: "green", fontSize: "0.8rem" }}>Saved!</span>
-          )}
+          {saved && <span className="text-green-600 text-xs">Saved!</span>}
         </div>
       )}
     </div>

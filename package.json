@@ -9,11 +9,19 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.js"
-    }
+    },
+    "./styles.css": "./dist/styles.css"
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
+    "build:ts": "tsc",
+    "build:css": "tailwindcss -i ./src/styles.css -o ./dist/styles.css --minify",
+    "build": "npm-run-all --sequential build:ts build:css",
+    "watch:ts": "tsc --watch",
+    "watch:css": "tailwindcss -i ./src/styles.css -o ./dist/styles.css --watch",
+    "dev": "npm-run-all --parallel watch:ts watch:css",
     "prepare": "npm run build"
   },
   "keywords": [

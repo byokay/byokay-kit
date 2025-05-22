@@ -2,7 +2,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { KeyInput } from "../src/ui/KeyInput";
-import "./styles.css";
+import "../dist/styles.css";
 
 const App = () => {
   return (
