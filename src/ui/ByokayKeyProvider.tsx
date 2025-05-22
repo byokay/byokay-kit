@@ -1,13 +1,11 @@
 // src/ui/ByokayKeyProvider.tsx
 import React, { useState, useCallback } from "react";
-// Ensure this path reflects the renamed core file (e.g., ByokayKey.ts)
-import { SupportedProvider } from "../core/ByokayKeyManager";
+import { SupportedProvider } from "../core/ByokayKeyManager"; // Ensure path
 import { useMultiApiKeys } from "../hooks/useMultiApiKeys";
 import { Modal } from "./components/Modal";
-import { KeyManagerContent } from "./components/KeyManagerContent";
+import { KeyManagerContent } from "./components/KeyManagerContent"; // Assuming this component exists
 
-// Re-export SupportedProvider from the correct path
-export type { SupportedProvider } from "../core/ByokayKeyManager";
+export type { SupportedProvider } from "../core/ByokayKeyManager"; // Ensure path
 
 interface Props {
   providers?: SupportedProvider[];
@@ -21,16 +19,19 @@ export function ByokayKeyProvider({
   children,
 }: Props) {
   const [showModal, setShowModal] = useState(false);
+  // confirmingClearAll state is now managed within KeyManagerContent or its footer
 
   const {
     keys,
     saved,
     validating,
     validated,
+    validationMessages, // Get this from the hook
     handleKeyChange,
     handleClear,
-    handleClearAll,
+    handleClearAll, // This will be passed to KeyManagerContent
     handleValidate,
+    handleSaveAllAndClose, // This will be passed to KeyManagerContent
     hasAnyKey,
     providerNames,
   } = useMultiApiKeys(providers);
@@ -40,13 +41,12 @@ export function ByokayKeyProvider({
 
   return (
     <>
-      {/* Call the children function, passing it the tools to render the trigger */}
       {children(openModal, hasAnyKey)}
-
       <Modal
         isOpen={showModal}
         onClose={closeModal}
         title="Connect AI Providers"
+        // The footer is now part of KeyManagerContent, or handleSaveAllAndClose is passed differently
       >
         <KeyManagerContent
           providers={providers}
@@ -55,10 +55,13 @@ export function ByokayKeyProvider({
           saved={saved}
           validating={validating}
           validated={validated}
+          validationMessages={validationMessages} // Pass this down
           onKeyChange={handleKeyChange}
           onValidate={handleValidate}
           onClear={handleClear}
-          onClearAll={handleClearAll}
+          onClearAll={handleClearAll} // Pass this down for the footer in KeyManagerContent
+          onSaveAllAndClose={() => handleSaveAllAndClose(closeModal)} // Pass this down
+          onCancel={closeModal} // Pass closeModal for the cancel button in KeyManagerContent's footer
         />
       </Modal>
     </>

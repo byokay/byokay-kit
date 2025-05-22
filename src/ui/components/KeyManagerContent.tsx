@@ -10,10 +10,13 @@ interface KeyManagerContentProps {
   saved: Record<SupportedProvider, boolean>;
   validating: Record<SupportedProvider, boolean>;
   validated: Record<SupportedProvider, boolean>;
+  validationMessages: Record<SupportedProvider, string | null>;
   onKeyChange: (provider: SupportedProvider, value: string) => void;
   onValidate: (provider: SupportedProvider, key: string) => void;
   onClear: (provider: SupportedProvider) => void;
   onClearAll: () => void;
+  onSaveAllAndClose: () => void;
+  onCancel: () => void;
 }
 
 export function KeyManagerContent({
@@ -23,10 +26,13 @@ export function KeyManagerContent({
   saved,
   validating,
   validated,
+  validationMessages,
   onKeyChange,
   onValidate,
   onClear,
   onClearAll,
+  onSaveAllAndClose,
+  onCancel,
 }: KeyManagerContentProps) {
   const [confirmingClearAll, setConfirmingClearAll] = useState(false);
 
@@ -48,6 +54,7 @@ export function KeyManagerContent({
         saved={saved}
         validating={validating}
         validated={validated}
+        validationMessages={validationMessages}
         onKeyChange={onKeyChange}
         onValidate={onValidate}
         onClear={onClear}

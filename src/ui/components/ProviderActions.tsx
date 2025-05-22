@@ -5,6 +5,7 @@ interface ProviderActionsProps {
   isValidated: boolean;
   isSaved: boolean;
   isValidating: boolean;
+  isExplicitlyInvalid?: boolean;
   onValidate: () => void;
   onClear: () => void;
 }
@@ -14,6 +15,7 @@ export function ProviderActions({
   isValidated,
   isSaved,
   isValidating,
+  isExplicitlyInvalid,
   onValidate,
   onClear,
 }: ProviderActionsProps) {
@@ -24,6 +26,17 @@ export function ProviderActions({
   const handleConfirmDelete = () => {
     onClear();
     setIsConfirmingDelete(false);
+  };
+
+  // Handle button click based on validation state
+  const handleMainButtonClick = () => {
+    if (isExplicitlyInvalid) {
+      // If invalid, clear the key
+      onClear();
+    } else {
+      // Otherwise validate
+      onValidate();
+    }
   };
 
   if (isSaved) {
@@ -92,34 +105,57 @@ export function ProviderActions({
   return (
     <>
       <button
-        onClick={onValidate}
-        disabled={!hasKey}
+        onClick={handleMainButtonClick}
+        disabled={!hasKey || isValidating}
         className={`p-1.5 rounded transition-all ${
           isValidated
             ? "text-green-700 bg-green-50 hover:bg-green-100 hover:shadow-sm"
+            : isExplicitlyInvalid
+            ? "text-red-600 hover:text-red-700 hover:bg-red-50 hover:scale-110 hover:shadow-sm"
             : hasKey
             ? "text-gray-600 hover:text-green-700 hover:bg-green-50 hover:scale-110 hover:shadow-sm"
             : "text-gray-400 cursor-not-allowed"
         }`}
         title={
-          isValidated ? "Key validated and saved" : "Validate and save key"
+          isValidated
+            ? "Key validated and saved"
+            : isExplicitlyInvalid
+            ? "Clear invalid key"
+            : "Validate and save key"
         }
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className={`h-5 w-5 ${
-            isValidated ? "stroke-green-600 stroke-[2.5]" : "stroke-2"
-          } transition-all`}
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M5 13l4 4L19 7"
-          />
-        </svg>
+        {isExplicitlyInvalid ? (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5 stroke-red-600"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+        ) : (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className={`h-5 w-5 ${
+              isValidated ? "stroke-green-600 stroke-[2.5]" : "stroke-2"
+            } transition-all`}
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M5 13l4 4L19 7"
+            />
+          </svg>
+        )}
       </button>
 
       {hasKey && (
