@@ -29,27 +29,30 @@ export function ProviderList({
   return (
     <div className="w-full">
       {/* Header row */}
-      <div className="grid grid-cols-12 gap-2 mb-2 text-xs text-gray-500 font-medium px-1">
+      <div className="grid grid-cols-12 gap-2 mb-3 text-xs text-gray-600 font-medium px-3 py-2 border-b border-gray-100">
         <div className="col-span-3">Provider</div>
         <div className="col-span-7">API Key</div>
-        <div className="col-span-2 text-center">Actions</div>
+        <div className="col-span-2 text-right pr-2">Actions</div>
       </div>
 
-      {/* Provider rows */}
-      {providers.map((provider) => (
-        <ProviderRow
-          key={provider}
-          provider={provider}
-          providerDisplayName={providerNames[provider]}
-          currentKey={keys[provider] || ""}
-          isSaved={saved[provider] || false}
-          isValidating={validating[provider] || false}
-          isValidated={validated[provider] || false}
-          onKeyChange={(value) => onKeyChange(provider, value)}
-          onValidate={() => onValidate(provider, keys[provider] || "")}
-          onClear={() => onClear(provider)}
-        />
-      ))}
+      {/* Provider rows container with spacing */}
+      <div className="space-y-0.5">
+        {/* Provider rows */}
+        {providers.map((provider) => (
+          <ProviderRow
+            key={provider}
+            provider={provider}
+            providerDisplayName={providerNames[provider]}
+            currentKey={keys[provider] || ""}
+            isSaved={saved[provider] || false}
+            isValidating={validating[provider] || false}
+            isValidated={validated[provider] || false}
+            onKeyChange={(value) => onKeyChange(provider, value)}
+            onValidate={() => onValidate(provider, keys[provider] || "")}
+            onClear={() => onClear(provider)}
+          />
+        ))}
+      </div>
     </div>
   );
 }
