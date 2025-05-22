@@ -40,7 +40,7 @@ export class KeyManager {
   }
 
   private getStorageKey(provider: SupportedProvider): string {
-    return `byok-${provider}-key`;
+    return `byokay-${provider}-key`;
   }
 
   // Fallback memory-only storage (used in SSR or tests)

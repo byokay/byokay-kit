@@ -1,4 +1,4 @@
-// src/ui/ByokaiKeyProvider.tsx
+// src/ui/ByokayKeyProvider.tsx
 import React, { useState, useCallback } from "react";
 import { SupportedProvider } from "../core/KeyManager"; // You already have this
 import { useMultiApiKeys } from "../hooks/useMultiApiKeys";
@@ -13,11 +13,11 @@ interface Props {
   children: (openModal: () => void, hasAnyKey: boolean) => React.ReactNode;
 }
 
-// ... rest of your ByokaiKeyProvider.tsx code remains the same
+// ... rest of your ByokayKeyProvider.tsx code remains the same
 // (using the render prop pattern we discussed, where 'children' is a function)
 const defaultProviders: SupportedProvider[] = ["openai"];
 
-export function ByokaiKeyProvider({
+export function ByokayKeyProvider({
   providers = defaultProviders,
   children,
 }: Props) {

@@ -133,16 +133,6 @@ export function useMultiApiKeys(initialProviders: SupportedProvider[]) {
     (onClose: () => void) => {
       Object.entries(keys).forEach(([providerStr, keyVal]) => {
         const provider = providerStr as SupportedProvider;
-        // Save if key exists, is not empty, and isn't already marked as validated
-        // (handleSave will also mark as validated after its internal process if called via handleValidate)
-        // Or more simply, just save if key is present and potentially different from stored.
-        // The original logic was: if (key && !validated[provider])
-        // Let's stick to saving any key that is present, handleSave is idempotent.
-        // Or, if validate also saves, perhaps this button only needs to ensure validation has occurred.
-        // The prompt's `handleSaveAll` saved keys that were present but not validated.
-        // `handleSave` itself doesn't set `validated` true, `handleValidate` does.
-        // So, if a key is typed but not validated, `handleValidate` should be called for it.
-        // Or, if the "Save" button in the footer is meant to save without re-validating if already validated:
         if (keyVal && keyVal.trim()) {
           // If there's a key to save
           if (!validated[provider]) {

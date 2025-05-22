@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      "byokai-kit": path.resolve(__dirname, "../src"),
+      "byokay-kit": path.resolve(__dirname, "../src"),
     },
   },
 });

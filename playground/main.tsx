@@ -3,9 +3,9 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 // Assuming SupportedProvider might be needed by consumer for defining the providers array type explicitly
 import {
-  ByokaiKeyProvider,
+  ByokayKeyProvider,
   SupportedProvider,
-} from "../src/ui/ByokaiKeyProvider"; // Adjust path if needed
+} from "../src/ui/ByokayKeyProvider";
 
 // Ensure this path correctly points to your compiled CSS for the modal and its contents
 // Your tree shows dist/styles.css. If your build outputs to dist/ui/styles.css, use that.
@@ -55,7 +55,7 @@ const App = () => {
         justifyContent: "flex-end",
       }}
     >
-      <ByokaiKeyProvider providers={myProviders}>
+      <ByokayKeyProvider providers={myProviders}>
         {(openModal, hasAnyKey) => (
           <button
             onClick={openModal}
@@ -78,7 +78,7 @@ const App = () => {
             {hasAnyKey ? "AI Connected" : "Connect AI"}
           </button>
         )}
-      </ByokaiKeyProvider>
+      </ByokayKeyProvider>
     </div>
   );
 };
