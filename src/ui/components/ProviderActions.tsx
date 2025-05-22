@@ -6,6 +6,7 @@ interface ProviderActionsProps {
   isSaved: boolean;
   isValidating: boolean;
   isExplicitlyInvalid?: boolean;
+  isUnverified?: boolean;
   onValidate: () => void;
   onClear: () => void;
 }
@@ -16,6 +17,7 @@ export function ProviderActions({
   isSaved,
   isValidating,
   isExplicitlyInvalid,
+  isUnverified,
   onValidate,
   onClear,
 }: ProviderActionsProps) {
@@ -38,6 +40,13 @@ export function ProviderActions({
       onValidate();
     }
   };
+
+  const isTrulyInvalid =
+    !isValidated &&
+    !isUnverified &&
+    hasKey &&
+    !isValidating &&
+    isExplicitlyInvalid;
 
   if (isSaved) {
     return (
@@ -107,24 +116,59 @@ export function ProviderActions({
       <button
         onClick={handleMainButtonClick}
         disabled={!hasKey || isValidating}
-        className={`p-1.5 rounded transition-all ${
+        className={`p-1.5 rounded transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 ${
           isValidated
-            ? "text-green-700 bg-green-50 hover:bg-green-100 hover:shadow-sm"
+            ? "text-green-700 bg-green-50 hover:bg-green-100 focus-visible:ring-green-500" // Validated
+            : isUnverified
+            ? "text-yellow-700 bg-yellow-50 hover:bg-yellow-100 focus-visible:ring-yellow-500" // Unverified due to CORS
             : isExplicitlyInvalid
-            ? "text-red-600 hover:text-red-700 hover:bg-red-50 hover:scale-110 hover:shadow-sm"
+            ? "text-red-600 hover:text-red-700 hover:bg-red-50 focus-visible:ring-red-500" // Invalid
             : hasKey
-            ? "text-gray-600 hover:text-green-700 hover:bg-green-50 hover:scale-110 hover:shadow-sm"
-            : "text-gray-400 cursor-not-allowed"
+            ? "text-gray-600 hover:text-blue-700 hover:bg-blue-50 focus-visible:ring-blue-500" // Has key, not validated yet
+            : "text-gray-400 cursor-not-allowed" // No key
         }`}
         title={
           isValidated
-            ? "Key validated and saved"
+            ? "Key is validated and saved"
+            : isUnverified
+            ? "Saved. Browser verification skipped (CORS). Click to re-attempt."
             : isExplicitlyInvalid
             ? "Clear invalid key"
-            : "Validate and save key"
+            : hasKey
+            ? "Validate and save key"
+            : "Enter a key to validate"
         }
       >
-        {isExplicitlyInvalid ? (
+        {isValidated ? ( // Green Check
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5 stroke-green-600 stroke-[2.5]"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M5 13l4 4L19 7"
+            />
+          </svg>
+        ) : isUnverified ? ( // Info Icon
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5 text-yellow-600"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+        ) : isExplicitlyInvalid ? ( // X Circle for invalid
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-5 w-5 stroke-red-600"
@@ -140,11 +184,10 @@ export function ProviderActions({
             />
           </svg>
         ) : (
+          // Default Check (not validated)
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className={`h-5 w-5 ${
-              isValidated ? "stroke-green-600 stroke-[2.5]" : "stroke-2"
-            } transition-all`}
+            className="h-5 w-5 stroke-2 text-gray-500 group-hover:text-blue-600"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"

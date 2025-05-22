@@ -1,11 +1,11 @@
 // src/ui/ByokayKeyProvider.tsx
 import React, { useState, useCallback } from "react";
-import { SupportedProvider } from "../core/ByokayKeyManager"; // Ensure path
+import { SupportedProvider } from "../core/ByokayKeyManager"; // Ensure this path is correct
 import { useMultiApiKeys } from "../hooks/useMultiApiKeys";
 import { Modal } from "./components/Modal";
-import { KeyManagerContent } from "./components/KeyManagerContent"; // Assuming this component exists
+import { KeyManagerContent } from "./components/KeyManagerContent";
 
-export type { SupportedProvider } from "../core/ByokayKeyManager"; // Ensure path
+export type { SupportedProvider } from "../core/ByokayKeyManager"; // Ensure this path is correct
 
 interface Props {
   providers?: SupportedProvider[];
@@ -19,25 +19,31 @@ export function ByokayKeyProvider({
   children,
 }: Props) {
   const [showModal, setShowModal] = useState(false);
-  // confirmingClearAll state is now managed within KeyManagerContent or its footer
+  // confirmingClearAll state is now managed within KeyManagerContent
 
   const {
     keys,
     saved,
     validating,
     validated,
-    validationMessages, // Get this from the hook
+    validationMessages, // Make sure this is from your hook if you added it
     handleKeyChange,
     handleClear,
-    handleClearAll, // This will be passed to KeyManagerContent
+    handleClearAll,
     handleValidate,
-    handleSaveAllAndClose, // This will be passed to KeyManagerContent
+    handleSaveAllAndClose,
     hasAnyKey,
     providerNames,
   } = useMultiApiKeys(providers);
 
   const openModal = useCallback(() => setShowModal(true), []);
-  const closeModal = useCallback(() => setShowModal(false), []);
+  const closeModal = useCallback(() => {
+    setShowModal(false);
+    // If confirmingClearAll was managed here, it would be reset here too.
+    // Since it's in KeyManagerContent, it will reset when KeyManagerContent unmounts or remounts, or internally.
+  }, []);
+
+  // modalFooter is no longer defined here, as KeyManagerContent will handle its own action buttons.
 
   return (
     <>
@@ -46,7 +52,9 @@ export function ByokayKeyProvider({
         isOpen={showModal}
         onClose={closeModal}
         title="Connect AI Providers"
-        // The footer is now part of KeyManagerContent, or handleSaveAllAndClose is passed differently
+        // footer prop is removed, as KeyManagerContent now includes the footer actions.
+        // The Modal's main children area will contain KeyManagerContent,
+        // which in turn has the ProviderList and the action buttons at its bottom.
       >
         <KeyManagerContent
           providers={providers}
@@ -55,13 +63,13 @@ export function ByokayKeyProvider({
           saved={saved}
           validating={validating}
           validated={validated}
-          validationMessages={validationMessages} // Pass this down
+          validationMessages={validationMessages || {}} // Pass down, ensure default if not in hook yet
           onKeyChange={handleKeyChange}
           onValidate={handleValidate}
           onClear={handleClear}
-          onClearAll={handleClearAll} // Pass this down for the footer in KeyManagerContent
-          onSaveAllAndClose={() => handleSaveAllAndClose(closeModal)} // Pass this down
-          onCancel={closeModal} // Pass closeModal for the cancel button in KeyManagerContent's footer
+          onClearAll={handleClearAll}
+          onSaveAllAndClose={() => handleSaveAllAndClose(closeModal)}
+          onCancel={closeModal}
         />
       </Modal>
     </>

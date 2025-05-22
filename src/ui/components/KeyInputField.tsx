@@ -5,8 +5,9 @@ interface KeyInputFieldProps {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
-  isInvalid?: boolean;
-  invalidTooltipMessage?: string; // Tooltip message for the icon when invalid
+  isInvalid?: boolean; // For actual invalid keys (not CORS)
+  isUnverified?: boolean; // For CORS unverified keys
+  feedbackMessage?: string; // General message (could be error or CORS info)
 }
 
 export function KeyInputField({
@@ -14,12 +15,64 @@ export function KeyInputField({
   onChange,
   placeholder = "Enter API key",
   isInvalid,
-  invalidTooltipMessage = "Invalid API key. Please check and try again.",
+  isUnverified,
+  feedbackMessage,
 }: KeyInputFieldProps) {
-  const [showInvalidTooltip, setShowInvalidTooltip] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(false);
   const [showKey, setShowKey] = useState(false);
 
   const toggleShowKey = () => setShowKey((prev) => !prev);
+
+  let borderColor = "border-gray-300 focus:border-blue-500";
+  let ringColor = "focus:ring-blue-500";
+  let iconToShow: React.ReactNode = null;
+  let tooltipText = feedbackMessage;
+
+  if (isInvalid) {
+    // Hard invalid
+    borderColor = "border-red-400 focus:border-red-500";
+    ringColor = "focus:ring-red-500";
+    iconToShow = // Heroicon: x-circle
+      (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-5 w-5 text-red-500"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2}
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
+        </svg>
+      );
+    if (!tooltipText) tooltipText = "Invalid API Key.";
+  } else if (isUnverified) {
+    // CORS unverified
+    borderColor = "border-yellow-400 focus:border-yellow-500"; // Amber/yellow for unverified
+    ringColor = "focus:ring-yellow-500";
+    iconToShow = // Heroicon: information-circle
+      (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-5 w-5 text-yellow-500"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2}
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
+        </svg>
+      );
+    // Tooltip text will be the CORS message passed via feedbackMessage
+  }
 
   return (
     <div className="relative flex items-center w-full">
@@ -29,24 +82,20 @@ export function KeyInputField({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         className={`w-full px-3 py-2 text-sm border rounded-lg focus:ring-1 focus:outline-none transition-all 
-          ${
-            isInvalid
-              ? "border-red-400 focus:ring-red-400 focus:border-red-400 pr-10" // Add more pr for icon
-              : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-          }
-          ${
-            value ? "pr-10" : ""
-          } // Add padding when there's a value for the eye icon
+          ${borderColor} ${ringColor}
+          ${iconToShow || value ? "pr-10" : ""} 
         `}
         aria-invalid={isInvalid}
       />
 
-      {/* Show/hide password toggle */}
+      {/* Show/hide eye toggle */}
       {value && (
         <button
           type="button"
           onClick={toggleShowKey}
-          className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700 focus:outline-none"
+          className={`absolute inset-y-0 ${
+            iconToShow ? "right-8" : "right-0"
+          } pr-3 flex items-center text-gray-500 hover:text-gray-700 focus:outline-none`}
           title={showKey ? "Hide API key" : "Show API key"}
         >
           {showKey ? (
@@ -91,31 +140,17 @@ export function KeyInputField({
         </button>
       )}
 
-      {/* Invalid key icon and tooltip */}
-      {isInvalid && (
+      {/* Validation status icon with tooltip */}
+      {iconToShow && (
         <div
-          className={`absolute inset-y-0 ${
-            value ? "right-8" : "right-0"
-          } pr-3 flex items-center cursor-help`}
-          onMouseEnter={() => setShowInvalidTooltip(true)}
-          onMouseLeave={() => setShowInvalidTooltip(false)}
+          className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-help"
+          onMouseEnter={() => setShowTooltip(true)}
+          onMouseLeave={() => setShowTooltip(false)}
         >
-          {/* Heroicon: exclamation-triangle */}
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5 text-red-500"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fillRule="evenodd"
-              d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.216 3.031-1.742 3.031H4.42c-1.526 0-2.493-1.697-1.743-3.031l5.58-9.92zM10 13a1 1 0 110-2 1 1 0 010 2zm-1.75-4.5a1.75 1.75 0 00-3.5 0v.25a1.75 1.75 0 003.5 0v-.25z"
-              clipRule="evenodd"
-            />
-          </svg>
-          {showInvalidTooltip && (
+          {iconToShow}
+          {showTooltip && tooltipText && (
             <div className="absolute left-1/2 bottom-full transform -translate-x-1/2 mb-2 w-max max-w-xs px-3 py-1.5 bg-gray-800 text-white text-xs rounded-md shadow-lg z-20">
-              {invalidTooltipMessage}
+              {tooltipText}
               <div className="absolute left-1/2 top-full transform -translate-x-1/2 w-2 h-2 bg-gray-800 rotate-45"></div>
             </div>
           )}

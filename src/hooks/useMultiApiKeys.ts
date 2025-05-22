@@ -1,7 +1,7 @@
 // src/hooks/useMultiApiKeys.ts
 import { useState, useEffect, useCallback } from "react";
-import { ByokayKey, SupportedProvider } from "../core/ByokayKeyManager"; // Ensure class & file name consistency
-import { validateApiKey } from "../core/apiValidationService"; // Import the dispatcher
+import { ByokayKey, SupportedProvider } from "../core/ByokayKeyManager"; // Ensure path/name are correct
+import { validateApiKey } from "../core/apiValidationService"; // Ensure path is correct
 
 const manager = new ByokayKey();
 
@@ -30,6 +30,9 @@ export function useMultiApiKeys(initialProviders: SupportedProvider[]) {
   const [validationMessages, setValidationMessages] = useState<
     Record<SupportedProvider, string | null>
   >({} as Record<SupportedProvider, string | null>);
+  const [isUnverifiedDueToCors, setIsUnverifiedDueToCors] = useState<
+    Record<SupportedProvider, boolean>
+  >({} as Record<SupportedProvider, boolean>); // New state
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -46,35 +49,31 @@ export function useMultiApiKeys(initialProviders: SupportedProvider[]) {
       const stored = manager.getKey(provider);
       if (stored) {
         storedKeys[provider] = stored;
-        initialValidated[provider] = true;
+        initialValidated[provider] = true; // Assume stored is validated
       }
     });
     setKeys(storedKeys);
     setValidated(initialValidated);
     setValidationMessages({} as Record<SupportedProvider, string | null>);
+    setIsUnverifiedDueToCors({} as Record<SupportedProvider, boolean>); // Initialize
     setIsLoading(false);
   }, [initialProviders]);
 
   const handleKeyChange = useCallback(
     (provider: SupportedProvider, value: string) => {
       setKeys((prev) => ({ ...prev, [provider]: value }));
-      if (validated[provider]) {
-        setValidated((prev) => ({ ...prev, [provider]: false }));
-      }
-      if (saved[provider]) {
-        setSaved((prev) => ({ ...prev, [provider]: false }));
-      }
-      if (validationMessages[provider]) {
-        setValidationMessages((prev) => ({ ...prev, [provider]: null }));
-      }
+      setValidated((prev) => ({ ...prev, [provider]: false })); // Always reset validation on change
+      setSaved((prev) => ({ ...prev, [provider]: false }));
+      setValidationMessages((prev) => ({ ...prev, [provider]: null }));
+      setIsUnverifiedDueToCors((prev) => ({ ...prev, [provider]: false })); // Reset CORS flag
     },
-    [validated, saved, validationMessages]
+    [] // Removed dependencies that might cause stale closures if not careful, rely on current values
   );
 
   const handleSave = useCallback((provider: SupportedProvider, key: string) => {
     if (!key || !key.trim()) return;
     manager.setKey(provider, key);
-    setKeys((prev) => ({ ...prev, [provider]: key }));
+    setKeys((prev) => ({ ...prev, [provider]: key })); // Ensure local state is also updated
     setSaved((prev) => ({ ...prev, [provider]: true }));
     setTimeout(() => {
       setSaved((prev) => ({ ...prev, [provider]: false }));
@@ -91,95 +90,124 @@ export function useMultiApiKeys(initialProviders: SupportedProvider[]) {
     setValidated((prev) => ({ ...prev, [provider]: false }));
     setSaved((prev) => ({ ...prev, [provider]: false }));
     setValidationMessages((prev) => ({ ...prev, [provider]: null }));
+    setIsUnverifiedDueToCors((prev) => ({ ...prev, [provider]: false }));
   }, []);
 
   const handleClearAll = useCallback(() => {
-    initialProviders.forEach((provider) => {
-      manager.removeKey(provider);
-    });
+    initialProviders.forEach((provider) => manager.removeKey(provider));
     setKeys({} as Record<SupportedProvider, string>);
     setValidated({} as Record<SupportedProvider, boolean>);
     setSaved({} as Record<SupportedProvider, boolean>);
     setValidationMessages({} as Record<SupportedProvider, string | null>);
+    setIsUnverifiedDueToCors({} as Record<SupportedProvider, boolean>);
   }, [initialProviders]);
 
   const handleValidate = useCallback(
     async (provider: SupportedProvider, key: string) => {
+      if (!key || !key.trim()) {
+        setValidationMessages((prev) => ({
+          ...prev,
+          [provider]: "API key cannot be empty.",
+        }));
+        setValidating((prev) => ({ ...prev, [provider]: false }));
+        return;
+      }
       setValidating((prev) => ({ ...prev, [provider]: true }));
       setValidated((prev) => ({ ...prev, [provider]: false }));
       setValidationMessages((prev) => ({ ...prev, [provider]: null }));
+      setIsUnverifiedDueToCors((prev) => ({ ...prev, [provider]: false }));
 
-      // Use the central validation dispatcher
-      const { isValid, message } = await validateApiKey(provider, key);
+      const result = await validateApiKey(provider, key); // from apiValidationService
 
-      if (isValid) {
+      if (result.isValid) {
         handleSave(provider, key);
         setValidated((prev) => ({ ...prev, [provider]: true }));
-      } else {
-        setValidated((prev) => ({ ...prev, [provider]: false }));
+      } else if (result.isCorsError) {
+        handleSave(provider, key); // Save the key as per your requirement
+        // validated remains false
+        setIsUnverifiedDueToCors((prev) => ({ ...prev, [provider]: true })); // Set specific CORS flag
         setValidationMessages((prev) => ({
           ...prev,
-          [provider]: message || "Validation failed.",
+          [provider]: result.message,
         }));
+      } else {
+        // Genuinely invalid or other error (not CORS related)
+        // validated remains false
+        // isUnverifiedDueToCors remains false
+        setValidationMessages((prev) => ({
+          ...prev,
+          [provider]: result.message || "Invalid API key.",
+        }));
+        // Do NOT save if confirmed invalid by API
       }
       setValidating((prev) => ({ ...prev, [provider]: false }));
     },
-    [handleSave]
+    [handleSave] // handleSave is stable due to its own useCallback
   );
 
   const handleSaveAllAndClose = useCallback(
     async (onClose: () => void) => {
-      const validationPromises = Object.entries(keys)
-        .filter(([providerStr, keyVal]) => {
-          const provider = providerStr as SupportedProvider;
-          return (
-            keyVal &&
-            keyVal.trim() &&
-            !validated[provider] &&
-            !validationMessages[provider]
-          );
-        })
-        .map(([providerStr, keyVal]) => {
-          const provider = providerStr as SupportedProvider;
-          return handleValidate(provider, keyVal);
-        });
+      const validationTasks: Promise<void>[] = [];
+      const providersToFinalSave: SupportedProvider[] = [];
 
-      Object.entries(keys).forEach(([providerStr, keyVal]) => {
-        const provider = providerStr as SupportedProvider;
-        if (keyVal && keyVal.trim() && validated[provider]) {
-          handleSave(provider, keyVal);
+      for (const provider of initialProviders) {
+        const keyVal = keys[provider];
+        if (keyVal && keyVal.trim()) {
+          // If not validated AND not already flagged as CORS unverified (to avoid re-validating if user is okay with CORS message)
+          // AND no other validation message exists.
+          if (
+            !validated[provider] &&
+            !isUnverifiedDueToCors[provider] &&
+            !validationMessages[provider]
+          ) {
+            validationTasks.push(handleValidate(provider, keyVal));
+          } else if (validated[provider] || isUnverifiedDueToCors[provider]) {
+            // If it was already validated, or if it's a CORS-unverified key the user wants to keep,
+            // ensure it's saved if potentially edited.
+            providersToFinalSave.push(provider);
+          }
+        }
+      }
+
+      if (validationTasks.length > 0) {
+        await Promise.all(validationTasks);
+      }
+
+      providersToFinalSave.forEach((provider) => {
+        if (keys[provider] && keys[provider].trim()) {
+          // Ensure there's a key to save
+          handleSave(provider, keys[provider]);
         }
       });
 
-      if (validationPromises.length > 0) {
-        await Promise.all(validationPromises);
-      }
+      // After all attempts, check if any "hard" validation errors remain (not CORS unverified messages)
+      const hasHardErrors = initialProviders.some(
+        (provider) =>
+          validationMessages[provider] && !isUnverifiedDueToCors[provider]
+      );
 
-      // Check current state of validationMessages after all attempts
-      // This relies on handleValidate updating the state before Promise.all resolves for it.
-      // A more robust way for immediate check is if handleValidate returned its result.
-      // For now, this assumes state updates from handleValidate are processed.
-      const hasPersistentErrors = Object.values(keys).some((keyVal) => {
-        const provider = Object.keys(keys).find(
-          (k) => keys[k as SupportedProvider] === keyVal
-        ) as SupportedProvider;
-        return keyVal && keyVal.trim() && validationMessages[provider];
-      });
-
-      if (!hasPersistentErrors) {
+      if (!hasHardErrors) {
+        // Allow closing if only CORS unverified messages or no messages
         onClose();
       } else {
         console.warn(
-          "ByokayKit: Cannot close modal, some keys are still invalid after validation attempts."
+          "ByokayKit: Modal not closed, some keys have hard validation errors."
         );
-        // You might want to provide UI feedback to the user here instead of just a console warning.
       }
     },
-    [keys, validated, validationMessages, handleSave, handleValidate]
+    [
+      keys,
+      validated,
+      validationMessages,
+      isUnverifiedDueToCors,
+      handleSave,
+      handleValidate,
+      initialProviders,
+    ]
   );
 
-  const hasAnyKey = initialProviders.some((provider) =>
-    Boolean(keys[provider] && validated[provider])
+  const hasAnyKey = initialProviders.some(
+    (provider) => Boolean(keys[provider] && validated[provider]) // "Connected" means validated
   );
 
   return {
@@ -189,6 +217,7 @@ export function useMultiApiKeys(initialProviders: SupportedProvider[]) {
     validated,
     isLoading,
     validationMessages,
+    isUnverifiedDueToCors, // Expose new state
     handleKeyChange,
     handleClear,
     handleClearAll,

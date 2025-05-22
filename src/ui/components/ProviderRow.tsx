@@ -1,6 +1,6 @@
 // src/ui/components/ProviderRow.tsx
 import React from "react";
-import { SupportedProvider } from "../../core/ByokayKeyManager"; // Ensure path is correct
+import { SupportedProvider } from "../../core/ByokayKeyManager";
 import { ProviderStatus } from "./ProviderStatus";
 import { KeyInputField } from "./KeyInputField";
 import { ProviderActions } from "./ProviderActions";
@@ -12,7 +12,8 @@ interface ProviderRowProps {
   isSaved: boolean;
   isValidating: boolean;
   isValidated: boolean;
-  validationMessage?: string | null; // New prop for specific error message
+  isUnverifiedDueToCors?: boolean;
+  validationMessage?: string | null;
   onKeyChange: (value: string) => void;
   onValidate: () => void;
   onClear: () => void;
@@ -25,45 +26,56 @@ export function ProviderRow({
   isSaved,
   isValidating,
   isValidated,
+  isUnverifiedDueToCors,
   validationMessage,
   onKeyChange,
   onValidate,
   onClear,
 }: ProviderRowProps) {
   const hasKey = Boolean(currentKey);
-  // Determine if in an invalid state after validation attempt
-  const isExplicitlyInvalid =
-    !isValidated && !!validationMessage && !isValidating;
+  const isTrulyInvalid =
+    !!validationMessage &&
+    !isUnverifiedDueToCors &&
+    !isValidated &&
+    !isValidating;
 
   return (
-    <div className="grid grid-cols-12 gap-2 items-center py-3 px-2 rounded-md transition-colors hover:bg-gray-50">
-      <div className="col-span-3 flex items-center">
+    <div className="grid grid-cols-12 gap-x-2 gap-y-1 items-start py-3 px-1 md:px-2 rounded-md transition-colors hover:bg-gray-50/70">
+      <div className="col-span-full md:col-span-3 flex items-center min-h-[34px]">
         <ProviderStatus
           name={providerDisplayName}
           isValidated={isValidated}
           hasKey={hasKey}
+          isUnverified={isUnverifiedDueToCors}
         />
       </div>
 
-      <div className="col-span-7 relative">
+      <div className="col-span-full md:col-span-7 relative">
         <KeyInputField
           value={currentKey}
           onChange={onKeyChange}
-          isInvalid={isExplicitlyInvalid}
-          invalidTooltipMessage={validationMessage || undefined}
+          isInvalid={isTrulyInvalid}
+          isUnverified={isUnverifiedDueToCors}
+          feedbackMessage={validationMessage || undefined}
         />
-        {isExplicitlyInvalid && validationMessage && (
-          <p className="text-xs text-red-600 mt-1">{validationMessage}</p>
+        {(isTrulyInvalid || isUnverifiedDueToCors) && validationMessage && (
+          <p
+            className={`text-xs mt-1 px-1 ${
+              isTrulyInvalid ? "text-red-600" : "text-yellow-700"
+            }`}
+          >
+            {validationMessage}
+          </p>
         )}
       </div>
 
-      <div className="col-span-2 flex items-center justify-end space-x-1">
+      <div className="col-span-full md:col-span-2 flex items-center justify-end space-x-1 min-h-[34px]">
         <ProviderActions
           hasKey={hasKey}
           isValidated={isValidated}
           isSaved={isSaved}
           isValidating={isValidating}
-          isExplicitlyInvalid={isExplicitlyInvalid}
+          isUnverified={isUnverifiedDueToCors}
           onValidate={onValidate}
           onClear={onClear}
         />

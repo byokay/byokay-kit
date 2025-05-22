@@ -1,12 +1,12 @@
 // src/core/validators/claudeValidator.ts
-export async function validateClaudeApiKey(apiKey: string): Promise<boolean> {
+export async function validateClaudeApiKey(
+  apiKey: string
+): Promise<{ success: boolean; isCorsError: boolean; message?: string }> {
   if (!apiKey || !apiKey.trim()) {
-    return false;
+    return { success: false, isCorsError: false, message: "API key is empty." };
   }
 
   const endpoint = "https://api.anthropic.com/v1/models";
-  // It's good practice to use a recent, stable version.
-  // Refer to Anthropic's official documentation for the latest recommended version.
   const anthropicVersion = "2023-06-01";
 
   try {
@@ -15,36 +15,61 @@ export async function validateClaudeApiKey(apiKey: string): Promise<boolean> {
       headers: {
         "x-api-key": apiKey,
         "anthropic-version": anthropicVersion,
-        "Content-Type": "application/json", // Good practice, though less critical for GET
+        "Content-Type": "application/json",
       },
     });
 
     if (response.ok) {
-      // HTTP status 200-299
-      // A successful response (e.g., 200 OK with a list of models)
-      // indicates the key is valid and authenticated.
-      return true;
+      await response.json(); // Ensure response is valid
+      return { success: true, isCorsError: false };
     } else if (response.status === 401 || response.status === 403) {
-      // 401 Unauthorized or 403 Forbidden clearly indicates an issue with the key
-      // (invalid, expired, or lacks permissions for this basic call).
-      const errorData = await response.json().catch(() => ({})); // Try to get error details
-      console.error(
-        `Anthropic API Key Validation Failed: Status ${response.status}`,
-        errorData?.error?.message || response.statusText
-      );
-      return false;
-    } else {
-      // Other non-successful statuses (e.g., 400, 404, 5xx)
       const errorData = await response.json().catch(() => ({}));
+      const specificMessage = errorData?.error?.message || response.statusText;
       console.error(
-        `Anthropic API Key Validation Error: Status ${response.status}`,
-        errorData?.error?.message || response.statusText
+        `Anthropic Validation Failed: Status ${response.status}`,
+        specificMessage
       );
-      return false;
+      return {
+        success: false,
+        isCorsError: false,
+        message: `Key is invalid or lacks permissions: ${specificMessage}`,
+      };
+    } else {
+      const errorData = await response.json().catch(() => ({}));
+      const specificMessage = errorData?.error?.message || response.statusText;
+      console.error(
+        `Anthropic Validation Error: Status ${response.status}`,
+        specificMessage
+      );
+      return {
+        success: false,
+        isCorsError: false,
+        message: `Validation error (${response.status}): ${specificMessage}`,
+      };
     }
-  } catch (error) {
-    // Network errors or other issues with the fetch call itself
-    console.error("Anthropic API Key Validation Network Error:", error);
-    return false;
+  } catch (error: any) {
+    console.error(
+      "Anthropic Validation Network/Fetch Error:",
+      error.message || error
+    );
+    if (
+      error.name === "TypeError" &&
+      error.message.toLowerCase().includes("failed to fetch")
+    ) {
+      console.warn(
+        "CORS issue suspected for Anthropic /v1/models direct browser call."
+      );
+      return {
+        success: false,
+        isCorsError: true,
+        message:
+          "Could not verify key from browser (potential CORS issue). Key will be saved; please test with an actual API call.",
+      };
+    }
+    return {
+      success: false,
+      isCorsError: false,
+      message: `Network error during validation: ${error.message}`,
+    };
   }
 }
