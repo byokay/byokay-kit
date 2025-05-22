@@ -4,7 +4,8 @@ export type SupportedProvider =
   | "claude"
   | "gemini"
   | "grok"
-  | "deepseek";
+  | "deepseek"
+  | "llama";
 
 // Renamed interface
 interface ByokayKeyOptions {

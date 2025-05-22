@@ -10,8 +10,9 @@ export const providerNames: Record<SupportedProvider, string> = {
   openai: "OpenAI",
   claude: "Anthropic Claude",
   gemini: "Google Gemini",
-  grok: "Grok",
+  grok: "xAI Grok",
   deepseek: "DeepSeek",
+  llama: "Meta Llama",
 };
 
 export function useMultiApiKeys(initialProviders: SupportedProvider[]) {
