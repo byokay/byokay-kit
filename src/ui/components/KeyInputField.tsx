@@ -12,7 +12,7 @@ export function KeyInputField({ value, onChange }: KeyInputFieldProps) {
     <div className="relative">
       {/* Lock icon positioned inside the input */}
       {hasValue && (
-        <span className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none text-gray-500">
+        <span className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none text-gray-600">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="14"
@@ -36,8 +36,8 @@ export function KeyInputField({ value, onChange }: KeyInputFieldProps) {
         placeholder="Enter API key"
         className={`w-full px-2 ${
           hasValue ? "pl-7" : "pl-2"
-        } py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-green-600 focus:border-green-600 outline-none font-mono ${
-          !hasValue && "placeholder:text-gray-300 placeholder:opacity-50"
+        } py-1 text-sm border border-gray-400 rounded focus:ring-1 focus:ring-green-600 focus:border-green-600 outline-none font-mono text-gray-800 ${
+          !hasValue && "placeholder:text-gray-500 placeholder:opacity-90"
         }`}
       />
     </div>

@@ -30,7 +30,7 @@ export function ProviderRow({
   const hasKey = Boolean(currentKey);
 
   return (
-    <div className="grid grid-cols-12 gap-2 items-center mb-3 py-2 border-b border-gray-100 last:border-b-0 last:mb-0">
+    <div className="grid grid-cols-12 gap-2 items-center mb-3 py-2 border-b border-gray-200 last:border-b-0 last:mb-0">
       {/* Provider name with connection status */}
       <div className="col-span-3 flex items-center">
         <ProviderStatus

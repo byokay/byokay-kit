@@ -14,7 +14,7 @@ export function ProviderStatus({
   return (
     <div
       className={`text-sm font-medium ${
-        hasKey && isValidated ? "text-green-600" : "text-gray-700"
+        hasKey && isValidated ? "text-green-600" : "text-gray-800"
       }`}
     >
       {name}

@@ -28,7 +28,7 @@ export function ProviderActions({
 
   if (isSaved) {
     return (
-      <span className="text-green-600 text-xs bg-green-50 py-1 px-2 rounded-full">
+      <span className="text-green-700 text-xs bg-green-50 py-1 px-2 rounded-full font-medium">
         Saved!
       </span>
     );
@@ -36,7 +36,7 @@ export function ProviderActions({
 
   if (isValidating) {
     return (
-      <span className="text-blue-600 text-xs bg-blue-50 py-1 px-2 rounded-full w-16 text-center animate-pulse">
+      <span className="text-blue-700 text-xs bg-blue-50 py-1 px-2 rounded-full w-16 text-center animate-pulse font-medium">
         Validating
       </span>
     );
@@ -47,7 +47,7 @@ export function ProviderActions({
       <div className="flex items-center space-x-1">
         <button
           onClick={handleConfirmDelete}
-          className="p-1 rounded text-red-600 bg-red-50 hover:bg-red-100 hover:text-red-700 transition-all"
+          className="p-1 rounded text-red-700 bg-red-50 hover:bg-red-100 hover:text-red-800 transition-all"
           title="Confirm delete"
         >
           <svg
@@ -67,7 +67,7 @@ export function ProviderActions({
         </button>
         <button
           onClick={handleCancelDelete}
-          className="p-1 rounded text-gray-500 bg-gray-50 hover:bg-gray-100 hover:text-gray-700 transition-all"
+          className="p-1 rounded text-gray-600 bg-gray-100 hover:bg-gray-200 hover:text-gray-800 transition-all"
           title="Cancel"
         >
           <svg
@@ -96,10 +96,10 @@ export function ProviderActions({
         disabled={!hasKey}
         className={`p-1.5 rounded transition-all ${
           isValidated
-            ? "text-green-600 bg-green-50"
+            ? "text-green-700 bg-green-50"
             : hasKey
-            ? "text-gray-400 hover:text-green-600 hover:bg-green-50 hover:scale-110 hover:shadow-sm"
-            : "text-gray-300 cursor-not-allowed"
+            ? "text-gray-600 hover:text-green-700 hover:bg-green-50 hover:scale-110 hover:shadow-sm"
+            : "text-gray-400 cursor-not-allowed"
         }`}
         title={
           isValidated ? "Key validated and saved" : "Validate and save key"
@@ -125,7 +125,7 @@ export function ProviderActions({
       {hasKey && (
         <button
           onClick={handleStartDelete}
-          className="p-1.5 rounded text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100 transition-all hover:scale-110 hover:shadow-sm"
+          className="p-1.5 rounded text-red-700 hover:text-red-800 bg-red-50 hover:bg-red-100 transition-all hover:scale-110 hover:shadow-sm"
           title="Remove key"
         >
           <svg

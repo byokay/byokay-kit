@@ -22,7 +22,7 @@ export function ClearAllSection({
       {!isConfirming && (
         <button
           onClick={onStartClear}
-          className="text-gray-500 hover:text-red-600 text-xs flex items-center gap-1 py-1 px-2 rounded hover:bg-gray-50 transition-colors"
+          className="text-gray-600 hover:text-red-700 text-xs flex items-center gap-1 py-1 px-2 rounded hover:bg-gray-100 transition-colors font-medium"
           title="Clear all API keys"
         >
           <svg
@@ -44,16 +44,18 @@ export function ClearAllSection({
       )}
       {isConfirming && (
         <div className="flex items-center space-x-2">
-          <span className="text-xs text-red-600">Are you sure?</span>
+          <span className="text-xs text-red-700 font-medium">
+            Are you sure?
+          </span>
           <button
             onClick={onConfirmClear}
-            className="text-xs bg-red-50 text-red-600 hover:bg-red-100 py-1 px-2 rounded transition-colors"
+            className="text-xs bg-red-50 text-red-700 hover:bg-red-100 py-1 px-2 rounded transition-colors font-medium"
           >
             Yes, clear all
           </button>
           <button
             onClick={onCancelClear}
-            className="text-xs bg-gray-50 text-gray-600 hover:bg-gray-100 py-1 px-2 rounded transition-colors"
+            className="text-xs bg-gray-100 text-gray-700 hover:bg-gray-200 py-1 px-2 rounded transition-colors font-medium"
           >
             Cancel
           </button>

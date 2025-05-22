@@ -40,7 +40,7 @@ export function KeyManagerContent({
   };
 
   return (
-    <div>
+    <div className="text-gray-800">
       <ProviderList
         providers={providers}
         providerNames={providerNames}
