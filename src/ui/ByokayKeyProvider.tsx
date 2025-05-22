@@ -1,20 +1,19 @@
 // src/ui/ByokayKeyProvider.tsx
 import React, { useState, useCallback } from "react";
-import { SupportedProvider } from "../core/KeyManager"; // You already have this
+// Ensure this path reflects the renamed core file (e.g., ByokayKey.ts)
+import { SupportedProvider } from "../core/ByokayKeyManager";
 import { useMultiApiKeys } from "../hooks/useMultiApiKeys";
 import { Modal } from "./components/Modal";
 import { ProviderList } from "./components/ProviderList";
 
-// Add this line to re-export the type:
-export type { SupportedProvider } from "../core/KeyManager";
+// Re-export SupportedProvider from the correct path
+export type { SupportedProvider } from "../core/ByokayKeyManager";
 
 interface Props {
   providers?: SupportedProvider[];
   children: (openModal: () => void, hasAnyKey: boolean) => React.ReactNode;
 }
 
-// ... rest of your ByokayKeyProvider.tsx code remains the same
-// (using the render prop pattern we discussed, where 'children' is a function)
 const defaultProviders: SupportedProvider[] = ["openai"];
 
 export function ByokayKeyProvider({
@@ -41,7 +40,7 @@ export function ByokayKeyProvider({
   const openModal = useCallback(() => setShowModal(true), []);
   const closeModal = useCallback(() => {
     setShowModal(false);
-    setConfirmingClearAll(false);
+    setConfirmingClearAll(false); // Reset confirmation state when modal closes
   }, []);
 
   const hasKeysToClearCurrently = Object.values(keys).some((key) => !!key);
@@ -53,6 +52,7 @@ export function ByokayKeyProvider({
     setConfirmingClearAll(false);
   };
 
+  // Using the exact modalFooter structure and classes you provided for correct styling
   const modalFooter = (
     <div className="flex justify-between items-center">
       {/* Clear All button section */}

@@ -1,4 +1,4 @@
 import "./styles.css";
 
-export * from "./core/KeyManager";
+export * from "./core/ByokayKeyManager";
 export * from "./ui";

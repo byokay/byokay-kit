@@ -1,6 +1,6 @@
 // src/ui/components/ProviderRow.tsx
 import React from "react";
-import { SupportedProvider } from "../../core/KeyManager";
+import { SupportedProvider } from "../../core/ByokayKeyManager";
 
 interface ProviderRowProps {
   provider: SupportedProvider;

@@ -20,8 +20,7 @@ const App = () => {
     "deepseek",
   ];
 
-  // Styles to mimic the original Tailwind button:
-  // Original Tailwind: "flex items-center gap-2 text-blue-600 bg-blue-50 hover:bg-blue-100 px-3 py-2 rounded-full text-sm font-medium transition-colors"
+  // Styles for the custom button
   const buttonBaseStyle: React.CSSProperties = {
     display: "inline-flex", // for flex items-center gap-2
     alignItems: "center",
@@ -40,12 +39,6 @@ const App = () => {
     transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
     transitionDuration: "150ms",
   };
-
-  // Simple hover effect can be done with pseudo-classes in a separate CSS file for playground,
-  // or by managing hover state in JS (more complex for just a button).
-  // For simplicity, inline styles won't easily replicate hover states like `hover:bg-blue-100`.
-  // The consumer would typically use their own CSS classes for this.
-  // For this example, we'll omit the direct hover style change via inline styles.
 
   return (
     <div
@@ -67,9 +60,7 @@ const App = () => {
               (e.currentTarget.style.backgroundColor = "#EFF6FF")
             } // Revert to bg-blue-50
             title={
-              hasAnyKey
-                ? "Manage your connected AI providers"
-                : "Connect your AI providers"
+              hasAnyKey ? "Manage your AI API keys" : "Connect your AI API keys"
             }
           >
             <span

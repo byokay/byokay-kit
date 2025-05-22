@@ -1,9 +1,10 @@
 // src/hooks/useMultiApiKeys.ts
 import { useState, useEffect, useCallback } from "react";
-import { KeyManager, SupportedProvider } from "../core/KeyManager";
+// Updated import statement
+import { ByokayKey, SupportedProvider } from "../core/ByokayKeyManager";
 
-// Instantiate KeyManager here or pass it as an argument if it needs to be a shared singleton
-const manager = new KeyManager();
+// Instantiate with the new class name
+const manager = new ByokayKey();
 
 export const providerNames: Record<SupportedProvider, string> = {
   openai: "OpenAI",
@@ -40,10 +41,10 @@ export function useMultiApiKeys(initialProviders: SupportedProvider[]) {
     setIsLoading(true);
 
     initialProviders.forEach((provider) => {
-      const stored = manager.getKey(provider);
+      const stored = manager.getKey(provider); // Uses the 'manager' instance (now ByokayKey)
       if (stored) {
         storedKeys[provider] = stored;
-        initialValidated[provider] = true; // Assume stored keys are validated
+        initialValidated[provider] = true;
       }
     });
 
@@ -58,19 +59,11 @@ export function useMultiApiKeys(initialProviders: SupportedProvider[]) {
         ...prev,
         [provider]: value,
       }));
-      // Reset validation state when input changes if it was previously validated
       if (validated[provider]) {
-        setValidated((prev) => ({
-          ...prev,
-          [provider]: false,
-        }));
+        setValidated((prev) => ({ ...prev, [provider]: false }));
       }
-      // Also reset saved status
       if (saved[provider]) {
-        setSaved((prev) => ({
-          ...prev,
-          [provider]: false,
-        }));
+        setSaved((prev) => ({ ...prev, [provider]: false }));
       }
     },
     [validated, saved]
@@ -78,12 +71,8 @@ export function useMultiApiKeys(initialProviders: SupportedProvider[]) {
 
   const handleSave = useCallback((provider: SupportedProvider, key: string) => {
     if (!key || !key.trim()) return;
-
-    manager.setKey(provider, key);
-    // No need to setKeys here if handleKeyChange already did,
-    // but if called directly (e.g. from validate or saveAll), ensure key is in state
+    manager.setKey(provider, key); // Uses the 'manager' instance
     setKeys((prev) => ({ ...prev, [provider]: key }));
-
     setSaved((prev) => ({ ...prev, [provider]: true }));
     setTimeout(() => {
       setSaved((prev) => ({ ...prev, [provider]: false }));
@@ -91,19 +80,19 @@ export function useMultiApiKeys(initialProviders: SupportedProvider[]) {
   }, []);
 
   const handleClear = useCallback((provider: SupportedProvider) => {
-    manager.removeKey(provider);
+    manager.removeKey(provider); // Uses the 'manager' instance
     setKeys((prev) => {
       const newKeys = { ...prev };
       delete newKeys[provider];
       return newKeys;
     });
     setValidated((prev) => ({ ...prev, [provider]: false }));
-    setSaved((prev) => ({ ...prev, [provider]: false })); // Clear saved status too
+    setSaved((prev) => ({ ...prev, [provider]: false }));
   }, []);
 
   const handleClearAll = useCallback(() => {
     initialProviders.forEach((provider) => {
-      manager.removeKey(provider);
+      manager.removeKey(provider); // Uses the 'manager' instance
     });
     setKeys({} as Record<SupportedProvider, string>);
     setValidated({} as Record<SupportedProvider, boolean>);
@@ -113,17 +102,11 @@ export function useMultiApiKeys(initialProviders: SupportedProvider[]) {
   const handleValidate = useCallback(
     (provider: SupportedProvider, key: string) => {
       if (!key || !key.trim()) return;
-
       setValidating((prev) => ({ ...prev, [provider]: true }));
-
       setTimeout(() => {
-        // Simulate validation
-        // In real scenario, an API call would happen here.
-        // If successful:
-        handleSave(provider, key); // Save also marks as 'saved' temporarily
+        handleSave(provider, key);
         setValidated((prev) => ({ ...prev, [provider]: true }));
         setValidating((prev) => ({ ...prev, [provider]: false }));
-        // If failed, you would set an error state and not validated.
       }, 1000);
     },
     [handleSave]
@@ -134,12 +117,9 @@ export function useMultiApiKeys(initialProviders: SupportedProvider[]) {
       Object.entries(keys).forEach(([providerStr, keyVal]) => {
         const provider = providerStr as SupportedProvider;
         if (keyVal && keyVal.trim()) {
-          // If there's a key to save
           if (!validated[provider]) {
-            // If not validated, validate (which includes save)
             handleValidate(provider, keyVal);
           } else {
-            // If already validated, but maybe changed and not re-validated, just save
             handleSave(provider, keyVal);
           }
         }
@@ -160,12 +140,11 @@ export function useMultiApiKeys(initialProviders: SupportedProvider[]) {
     validated,
     isLoading,
     handleKeyChange,
-    // handleSave, // Expose if direct save without validate is needed, currently validate calls save
     handleClear,
     handleClearAll,
     handleValidate,
     handleSaveAllAndClose,
     hasAnyKey,
-    providerNames, // Exporting this for convenience
+    providerNames,
   };
 }
