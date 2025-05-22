@@ -101,6 +101,15 @@ export function useMultiApiKeys(initialProviders: SupportedProvider[]) {
     setSaved((prev) => ({ ...prev, [provider]: false })); // Clear saved status too
   }, []);
 
+  const handleClearAll = useCallback(() => {
+    initialProviders.forEach((provider) => {
+      manager.removeKey(provider);
+    });
+    setKeys({} as Record<SupportedProvider, string>);
+    setValidated({} as Record<SupportedProvider, boolean>);
+    setSaved({} as Record<SupportedProvider, boolean>);
+  }, [initialProviders]);
+
   const handleValidate = useCallback(
     (provider: SupportedProvider, key: string) => {
       if (!key || !key.trim()) return;
@@ -163,6 +172,7 @@ export function useMultiApiKeys(initialProviders: SupportedProvider[]) {
     handleKeyChange,
     // handleSave, // Expose if direct save without validate is needed, currently validate calls save
     handleClear,
+    handleClearAll,
     handleValidate,
     handleSaveAllAndClose,
     hasAnyKey,

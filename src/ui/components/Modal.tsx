@@ -19,8 +19,14 @@ export function Modal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50 animate-fade-in">
-      <div className="bg-white shadow-lg rounded-xl overflow-hidden border border-gray-200 transition-all w-full max-w-md">
+    <div
+      className="fixed inset-0 flex items-center justify-center bg-black/50 z-50 animate-fade-in"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white shadow-lg rounded-xl overflow-hidden border border-gray-200 transition-all w-full max-w-md"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
         <div className="bg-blue-50 px-4 py-3 flex justify-between items-center border-b border-gray-200">
           <h3 className="font-medium text-gray-800">{title}</h3>
@@ -46,8 +52,6 @@ export function Modal({
 
         {/* Content */}
         <div className="p-4 max-h-[calc(80vh-100px)] overflow-y-auto">
-          {" "}
-          {/* Adjusted max-h to account for header/footer */}
           {children}
         </div>
 
