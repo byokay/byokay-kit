@@ -1,7 +1,7 @@
 // playground/main.tsx
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { KeyInput } from "../src/ui/KeyInput"; // Alias to src for dev
+import { ByokaiKeyProvider } from "../src/ui/ByokaiKeyProvider"; // Alias to src for dev
 
 // Ensure this path correctly points to your compiled CSS for KeyInput
 // Assuming your build script output is to 'dist/ui/styles.css'
@@ -16,7 +16,9 @@ const App = () => {
         justifyContent: "flex-end",
       }}
     >
-      <KeyInput providers={["openai", "claude", "gemini"]} />
+      <ByokaiKeyProvider
+        providers={["openai", "claude", "gemini", "grok", "deepseek"]}
+      />
     </div>
   );
 };

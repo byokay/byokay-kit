@@ -1,4 +1,9 @@
-export type SupportedProvider = "openai" | "claude" | "gemini";
+export type SupportedProvider =
+  | "openai"
+  | "claude"
+  | "gemini"
+  | "grok"
+  | "deepseek";
 
 interface KeyManagerOptions {
   storage?: Storage; // localStorage, sessionStorage, or memory fallback

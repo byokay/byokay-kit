@@ -1,1 +1,1 @@
-export * from "./KeyInput";
+export * from "./ByokaiKeyProvider";
