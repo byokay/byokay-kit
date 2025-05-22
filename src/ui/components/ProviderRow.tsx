@@ -66,28 +66,40 @@ export function ProviderRow({
             <button
               onClick={onValidate}
               disabled={!currentKey}
-              className={`p-1.5 rounded ${
+              className={`p-1.5 rounded transition-all ${
                 isValidated
                   ? "text-green-600 bg-green-50"
                   : currentKey
-                  ? "text-gray-400 hover:text-green-600 hover:bg-green-50"
+                  ? "text-gray-400 hover:text-green-600 hover:bg-green-50 hover:scale-110 hover:shadow-sm"
                   : "text-gray-300 cursor-not-allowed"
               }`}
-              title={isValidated ? "Validated" : "Validate key"}
+              title={
+                isValidated
+                  ? "Key validated and saved"
+                  : "Validate and save key"
+              }
             >
-              <span
-                className={`text-lg ${
-                  isValidated ? "font-bold" : "opacity-60"
-                }`}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className={`h-5 w-5 ${
+                  isValidated ? "stroke-[2.5]" : "stroke-2"
+                } transition-all`}
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
               >
-                ✓
-              </span>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
             </button>
 
             {currentKey && (
               <button
                 onClick={onClear}
-                className="p-1.5 rounded text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100"
+                className="p-1.5 rounded text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100 transition-all hover:scale-110 hover:shadow-sm"
                 title="Remove key"
               >
                 <svg
