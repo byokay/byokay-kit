@@ -114,7 +114,7 @@ export function ProviderActions({
       /* Green Check */
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        className="h-5 w-5 stroke-green-600 stroke-[2.5]"
+        className="h-4 w-4 stroke-green-600 stroke-2"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
