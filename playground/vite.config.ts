@@ -6,8 +6,6 @@ import path from "path";
 export default defineConfig({
   plugins: [react()],
   resolve: {
-    alias: {
-      "byokay-kit": path.resolve(__dirname, "../src"),
-    },
+    alias: {},
   },
 });

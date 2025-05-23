@@ -1,16 +1,7 @@
 // playground/main.tsx
 import React from "react";
 import ReactDOM from "react-dom/client";
-// Assuming SupportedProvider might be needed by consumer for defining the providers array type explicitly
-import {
-  ByokayKeyProvider,
-  SupportedProvider,
-} from "../src/ui/ByokayKeyProvider";
-import "../src/styles.css";
-
-// Ensure this path correctly points to your compiled CSS for the modal and its contents
-// Your tree shows dist/styles.css. If your build outputs to dist/ui/styles.css, use that.
-import "../dist/styles.css"; // CSS for Modal, ProviderList, ProviderRow internals
+import { ByokayKeyProvider, SupportedProvider } from "byokay-kit";
 
 const App = () => {
   const myProviders: SupportedProvider[] = [
