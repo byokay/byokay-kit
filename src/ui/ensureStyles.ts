@@ -14,6 +14,6 @@ export function ensureStyles() {
   const link = document.createElement("link");
   link.id = id;
   link.rel = "stylesheet";
-  link.href = new URL("./styles.css", import.meta.url).toString();
+  link.href = "https://cdn.jsdelivr.net/npm/byokay-kit@0.1.6/dist/styles.css";
   document.head.appendChild(link);
 }
