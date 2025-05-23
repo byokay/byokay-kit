@@ -4,6 +4,7 @@ import { SupportedProvider } from "../core/ByokayKeyManager"; // Ensure path is 
 import { useMultiApiKeys } from "../hooks/useMultiApiKeys";
 import { Modal } from "./components/Modal";
 import { KeyManagerContent } from "./components/KeyManagerContent";
+import { ensureStyles } from "./ensureStyles";
 
 export type { SupportedProvider } from "../core/ByokayKeyManager"; // Ensure path is correct
 
@@ -18,6 +19,8 @@ export function ByokayKeyProvider({
   providers = defaultProviders,
   children,
 }: Props) {
+  ensureStyles();
+
   const [showModal, setShowModal] = useState(false);
 
   const {
