@@ -1,5 +1,6 @@
 // src/ui/components/Modal.tsx
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
 interface ModalProps {
   isOpen: boolean;
@@ -18,15 +19,37 @@ export function Modal({
   children,
   footer,
 }: ModalProps) {
-  if (!isOpen) return null;
+  const [target, setTarget] = useState<Element | null>(null);
 
-  return (
+  useEffect(() => {
+    if (!isOpen) return;
+    const el = document.createElement("div");
+    document.body.appendChild(el);
+    setTarget(el);
+    return () => {
+      document.body.removeChild(el);
+    };
+  }, [isOpen]);
+
+  if (!isOpen || !target) return null;
+
+  return createPortal(
     <div
-      className="fixed inset-0 flex items-center justify-center bg-black/50 z-50 animate-fade-in"
+      className="
+        fixed inset-0 z-50 bg-black/50
+        flex justify-center md:items-center
+        items-start pt-10
+        animate-fade-in
+      "
       onClick={onClose}
     >
       <div
-        className="bg-white shadow-lg rounded-xl overflow-hidden border border-gray-200 transition-all w-full max-w-md"
+        className="
+          bg-white shadow-lg border border-gray-200 transition-all
+          w-full h-full grow max-w-none rounded-none
+          md:h-auto md:grow-0 md:max-w-md md:rounded-xl
+          overflow-hidden flex flex-col
+        "
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -39,8 +62,8 @@ export function Modal({
           </div>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 rounded-full p-1 hover:bg-gray-100 transition-colors flex-shrink-0"
             aria-label="Close"
+            className="text-gray-500 hover:text-gray-700 rounded-full p-1 hover:bg-gray-100 transition-colors flex-shrink-0"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -57,16 +80,15 @@ export function Modal({
           </button>
         </div>
 
-        {/* Content */}
-        <div className="p-4 max-h-[calc(80vh-100px)] overflow-y-auto">
-          {children}
-        </div>
+        {/* Body */}
+        <div className="p-4 flex-grow overflow-y-auto">{children}</div>
 
         {/* Footer */}
         {footer && (
           <div className="px-4 py-3 border-t border-gray-100">{footer}</div>
         )}
       </div>
-    </div>
+    </div>,
+    target
   );
 }

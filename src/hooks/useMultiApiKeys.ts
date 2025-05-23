@@ -141,64 +141,8 @@ export function useMultiApiKeys(initialProviders: SupportedProvider[]) {
     [handleSave]
   );
 
-  const handleSaveAllAndClose = useCallback(
-    async (onClose: () => void) => {
-      const validationTasks: Promise<void>[] = [];
-      const providersToFinalSave: SupportedProvider[] = [];
-
-      for (const currentProvider of initialProviders) {
-        const keyVal = keys[currentProvider];
-        if (keyVal && keyVal.trim()) {
-          if (
-            !validated[currentProvider] &&
-            !isUnverifiedDueToCors[currentProvider] &&
-            !validationMessages[currentProvider]
-          ) {
-            validationTasks.push(handleValidate(currentProvider, keyVal));
-          } else if (
-            validated[currentProvider] ||
-            isUnverifiedDueToCors[currentProvider]
-          ) {
-            providersToFinalSave.push(currentProvider);
-          }
-        }
-      }
-
-      if (validationTasks.length > 0) {
-        await Promise.all(validationTasks);
-      }
-
-      providersToFinalSave.forEach((p) => {
-        if (keys[p] && keys[p].trim()) {
-          handleSave(p, keys[p]);
-        }
-      });
-
-      const hasHardErrors = initialProviders.some(
-        (p) => validationMessages[p] && !isUnverifiedDueToCors[p]
-      );
-
-      if (!hasHardErrors) {
-        onClose();
-      } else {
-        console.warn(
-          "ByokayKit: Modal not closed, some keys have hard validation errors."
-        );
-      }
-    },
-    [
-      keys,
-      validated,
-      validationMessages,
-      isUnverifiedDueToCors,
-      handleSave,
-      handleValidate,
-      initialProviders,
-    ]
-  );
-
   const hasAnyKey = initialProviders.some((provider) =>
-    Boolean(keys[provider] && validated[provider])
+    Boolean(manager.getKey(provider))
   );
 
   return {
@@ -206,14 +150,13 @@ export function useMultiApiKeys(initialProviders: SupportedProvider[]) {
     saved,
     validating,
     validated,
-    isLoading,
     validationMessages,
     isUnverifiedDueToCors,
+    isLoading,
     handleKeyChange,
     handleClear,
     handleClearAll,
     handleValidate,
-    handleSaveAllAndClose,
     hasAnyKey,
     providerNames,
   };

@@ -1,11 +1,11 @@
 // tailwind.config.js
 /** @type {import('tailwindcss').Config} */
-export default {
-  content: [
-    "./src/**/*.{js,ts,jsx,tsx}", // This will scan all relevant files in your src folder
-  ],
-  theme: {
-    extend: {}, // You can customize Tailwind's default theme here
+module.exports = {
+  content: ["./src/**/*.{ts,tsx,js,jsx}", "./playground/**/*.{ts,tsx,js,jsx}"],
+  safelist: [], // optional
+  // 👇 custom extractor handles template strings with new lines
+  experimental: {
+    optimizeUniversalDefaults: true,
   },
   plugins: [],
 };

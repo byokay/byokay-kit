@@ -18,7 +18,7 @@ export function ClearAllSection({
   if (!hasKeys) return null;
 
   return (
-    <div className="mt-12 pt-4 border-t border-gray-200">
+    <>
       {!isConfirming && (
         <button
           onClick={onStartClear}
@@ -61,6 +61,6 @@ export function ClearAllSection({
           </button>
         </div>
       )}
-    </div>
+    </>
   );
 }

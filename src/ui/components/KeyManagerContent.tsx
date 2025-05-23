@@ -17,8 +17,6 @@ interface KeyManagerContentProps {
   onValidate: (provider: SupportedProvider, key: string) => void;
   onClear: (provider: SupportedProvider) => void;
   onClearAll: () => void;
-  onSaveAllAndClose: () => void; // For the main "Save" button
-  onCancel: () => void; // For the main "Cancel" button
 }
 
 export function KeyManagerContent({
@@ -34,12 +32,8 @@ export function KeyManagerContent({
   onValidate,
   onClear,
   onClearAll,
-  onSaveAllAndClose,
-  onCancel,
 }: KeyManagerContentProps) {
   const [confirmingClearAll, setConfirmingClearAll] = useState(false);
-
-  // Determine if there are any keys entered at all (for "Clear All" button visibility)
   const hasAnyEnteredKeys = Object.values(keys).some((key) => Boolean(key));
 
   const handleStartClearAll = () => setConfirmingClearAll(true);
@@ -50,12 +44,9 @@ export function KeyManagerContent({
   };
 
   return (
-    <div className="text-gray-800 flex flex-col h-full">
-      {" "}
-      {/* Ensure content can fill height */}
-      <div className="flex-grow overflow-y-auto">
-        {" "}
-        {/* Make ProviderList scrollable if content exceeds */}
+    <div className="flex flex-col h-full text-gray-800">
+      {/* ProviderList area with padding and scrolling */}
+      <div className="flex-grow overflow-y-auto p-4">
         <ProviderList
           providers={providers}
           providerNames={providerNames}
@@ -70,24 +61,29 @@ export function KeyManagerContent({
           onClear={onClear}
         />
       </div>
-      {/* Footer with ClearAllSection - single line separator */}
-      <div className="relative">
-        <ClearAllSection
-          hasKeys={hasAnyEnteredKeys}
-          isConfirming={confirmingClearAll}
-          onStartClear={handleStartClearAll}
-          onConfirmClear={handleConfirmClearAllAndReset}
-          onCancelClear={handleCancelClearAll}
-        />
-        <div className="absolute bottom-0 right-0 text-xs text-gray-400 pr-1">
-          <a
-            href="https://github.com/byokay/byokay-kit"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-gray-600 transition-colors"
-          >
-            Powered by Byokay
-          </a>
+
+      {/* Footer Actions Bar */}
+      <div className="shrink-0 px-4 py-3 border-t border-gray-200">
+        <div className="flex justify-between items-center">
+          <div>
+            <ClearAllSection
+              hasKeys={hasAnyEnteredKeys}
+              isConfirming={confirmingClearAll}
+              onStartClear={handleStartClearAll}
+              onConfirmClear={handleConfirmClearAllAndReset}
+              onCancelClear={handleCancelClearAll}
+            />
+          </div>
+          <div className="text-xs text-gray-400">
+            <a
+              href="https://github.com/byokay/byokay-kit"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-gray-600 transition-colors"
+            >
+              Powered by Byokay
+            </a>
+          </div>
         </div>
       </div>
     </div>

@@ -118,7 +118,7 @@ export function KeyInputField({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className={`w-full py-2 text-sm border rounded-lg focus:ring-1 focus:outline-none transition-all 
+        className={`w-full py-2 text-sm md:text-base border rounded-lg focus:ring-1 focus:outline-none transition-all 
           ${borderColor} ${ringColor}
           ${currentPl} ${currentPr}
         `}

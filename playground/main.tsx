@@ -6,6 +6,7 @@ import {
   ByokayKeyProvider,
   SupportedProvider,
 } from "../src/ui/ByokayKeyProvider";
+import "../src/styles.css";
 
 // Ensure this path correctly points to your compiled CSS for the modal and its contents
 // Your tree shows dist/styles.css. If your build outputs to dist/ui/styles.css, use that.

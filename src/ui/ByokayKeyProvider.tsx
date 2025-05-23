@@ -1,11 +1,11 @@
 // src/ui/ByokayKeyProvider.tsx
 import React, { useState, useCallback } from "react";
-import { SupportedProvider } from "../core/ByokayKeyManager"; // Ensure this path is correct
+import { SupportedProvider } from "../core/ByokayKeyManager"; // Ensure path is correct
 import { useMultiApiKeys } from "../hooks/useMultiApiKeys";
 import { Modal } from "./components/Modal";
 import { KeyManagerContent } from "./components/KeyManagerContent";
 
-export type { SupportedProvider } from "../core/ByokayKeyManager"; // Ensure this path is correct
+export type { SupportedProvider } from "../core/ByokayKeyManager"; // Ensure path is correct
 
 interface Props {
   providers?: SupportedProvider[];
@@ -19,7 +19,6 @@ export function ByokayKeyProvider({
   children,
 }: Props) {
   const [showModal, setShowModal] = useState(false);
-  // confirmingClearAll state is now managed within KeyManagerContent
 
   const {
     keys,
@@ -32,7 +31,6 @@ export function ByokayKeyProvider({
     handleClear,
     handleClearAll,
     handleValidate,
-    handleSaveAllAndClose,
     hasAnyKey,
     providerNames,
   } = useMultiApiKeys(providers);
@@ -40,11 +38,7 @@ export function ByokayKeyProvider({
   const openModal = useCallback(() => setShowModal(true), []);
   const closeModal = useCallback(() => {
     setShowModal(false);
-    // If confirmingClearAll was managed here, it would be reset here too.
-    // Since it's in KeyManagerContent, it will reset when KeyManagerContent unmounts or remounts, or internally.
   }, []);
-
-  // modalFooter is no longer defined here, as KeyManagerContent will handle its own action buttons.
 
   return (
     <>
@@ -63,13 +57,11 @@ export function ByokayKeyProvider({
           validating={validating}
           validated={validated}
           validationMessages={validationMessages || {}}
-          isUnverifiedDueToCors={isUnverifiedDueToCors}
+          isUnverifiedDueToCors={isUnverifiedDueToCors || {}}
           onKeyChange={handleKeyChange}
           onValidate={handleValidate}
           onClear={handleClear}
           onClearAll={handleClearAll}
-          onSaveAllAndClose={() => handleSaveAllAndClose(closeModal)}
-          onCancel={closeModal}
         />
       </Modal>
     </>
