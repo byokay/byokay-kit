@@ -1,4 +1,6 @@
 // src/core/validators/claudeValidator.ts
+import { UNVERIFIED_BROWSER_MESSAGE } from "../constants";
+
 export async function validateClaudeApiKey(
   apiKey: string
 ): Promise<{ success: boolean; isCorsError: boolean; message?: string }> {
@@ -6,11 +8,9 @@ export async function validateClaudeApiKey(
     return { success: false, isCorsError: false, message: "API key is empty." };
   }
 
-  // Browser validation disabled: Claude's endpoint blocks CORS.
   return {
-    success: false, // not validated
-    isCorsError: true, // flag for "saved but unverified"
-    message:
-      "Claude cannot be validated client-side. Key saved; please test with a real API call.",
+    success: false,
+    isCorsError: true,
+    message: UNVERIFIED_BROWSER_MESSAGE,
   };
 }

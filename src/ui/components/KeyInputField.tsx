@@ -20,6 +20,7 @@ export function KeyInputField({
 }: KeyInputFieldProps) {
   const [showErrorTooltip, setShowErrorTooltip] = useState(false);
   const [showKey, setShowKey] = useState(false);
+  const [showLockTooltip, setShowLockTooltip] = useState(false);
 
   const toggleShowKey = () => setShowKey((prev) => !prev);
 
@@ -59,6 +60,36 @@ export function KeyInputField({
 
   return (
     <div className="relative flex items-center w-full">
+      {/* Lock Icon with Tooltip */}
+      {hasValue && (
+        <div
+          className="absolute inset-y-0 left-4 flex items-center pointer-events-none"
+          onMouseEnter={() => setShowLockTooltip(true)}
+          onMouseLeave={() => setShowLockTooltip(false)}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-4 w-4 text-gray-400"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+            />
+          </svg>
+          {showLockTooltip && (
+            <div className="absolute left-1/2 bottom-full transform -translate-x-1/2 mb-2 w-max max-w-xs px-3 py-1.5 bg-gray-800 text-white text-xs rounded-md shadow-lg z-20">
+              Keys are stored locally only.
+              <div className="absolute left-1/2 top-full transform -translate-x-1/2 w-2 h-2 bg-gray-800 rotate-45"></div>
+            </div>
+          )}
+        </div>
+      )}
+
       <input
         type={showKey ? "text" : "password"}
         value={value}
@@ -66,18 +97,17 @@ export function KeyInputField({
         placeholder={placeholder}
         className={`w-full px-3 py-2 text-sm border rounded-lg focus:ring-1 focus:outline-none transition-all 
           ${borderColor} ${ringColor}
-          ${hasValue || hasErrorIcon ? "pr-10" : ""} 
+          ${hasValue ? "pl-12 pr-10" : ""} 
         `}
         aria-invalid={isInvalid}
       />
 
+      {/* Eye Icon */}
       {hasValue && (
         <button
           type="button"
           onClick={toggleShowKey}
-          className={`absolute inset-y-0 ${
-            hasErrorIcon ? "right-8" : "right-0"
-          } pr-3 flex items-center text-gray-500 hover:text-gray-700 focus:outline-none`}
+          className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700 focus:outline-none"
           title={showKey ? "Hide API key" : "Show API key"}
         >
           {showKey ? (
