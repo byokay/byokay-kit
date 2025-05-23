@@ -32,7 +32,7 @@ export function ProviderList({
 }: ProviderListProps) {
   return (
     <div className="w-full">
-      <div className="grid grid-cols-12 gap-x-2 gap-y-1 mb-3 text-xs text-gray-600 font-medium px-1 md:px-3 py-2 border-b border-gray-100">
+      <div className="grid grid-cols-12 gap-x-2 gap-y-1 mb-2 text-xs text-gray-600 font-medium px-1 md:px-3 py-1.5 border-b border-gray-100">
         <div className="col-span-full md:col-span-3">Provider</div>
         <div className="col-span-full md:col-span-7"></div>
         <div className="col-span-full md:col-span-2"></div>
