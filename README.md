@@ -148,6 +148,11 @@ async function callOpenAI() {
 
 ---
 
+## Project Links
+
+- **Repository:** [https://github.com/byokay/byokay-kit](https://github.com/byokay/byokay-kit)
+- **Issues:** [https://github.com/byokay/byokay-kit/issues](https://github.com/byokay/byokay-kit/issues)
+
 ## License
 
 MIT
