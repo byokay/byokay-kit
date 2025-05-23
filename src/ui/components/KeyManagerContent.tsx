@@ -71,7 +71,7 @@ export function KeyManagerContent({
         />
       </div>
       {/* Footer with ClearAllSection - single line separator */}
-      <div>
+      <div className="relative">
         <ClearAllSection
           hasKeys={hasAnyEnteredKeys}
           isConfirming={confirmingClearAll}
@@ -79,6 +79,16 @@ export function KeyManagerContent({
           onConfirmClear={handleConfirmClearAllAndReset}
           onCancelClear={handleCancelClearAll}
         />
+        <div className="absolute bottom-0 right-0 text-xs text-gray-400 pr-1">
+          <a
+            href="https://github.com/byokay/byokay-kit"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-gray-600 transition-colors"
+          >
+            Powered by Byokay
+          </a>
+        </div>
       </div>
     </div>
   );
