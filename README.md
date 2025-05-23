@@ -16,16 +16,7 @@ This eliminates the need for your app to manage sensitive credentials or maintai
 
 ## Live Demo
 
-<video
-src="./assets/demo.mp4"
-autoplay
-muted
-loop
-playsinline
-style="max-width:100%; border-radius:8px;"
-
-> 🎬 Your browser doesn’t support HTML5 video.
-> </video>
+![Byokay Kit Demo](assets/demo.mp4)
 
 ## Supported Providers
 
