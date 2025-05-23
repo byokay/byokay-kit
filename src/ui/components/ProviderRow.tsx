@@ -20,6 +20,7 @@ interface ProviderRowProps {
 }
 
 export function ProviderRow({
+  provider,
   providerDisplayName,
   currentKey,
   isSaved,
@@ -38,6 +39,9 @@ export function ProviderRow({
     !isValidated &&
     !isValidating;
 
+  // Create a dynamic placeholder that includes the provider name
+  const placeholder = `${providerDisplayName} API key...`;
+
   return (
     <div className="grid grid-cols-12 gap-x-2 gap-y-1 items-start py-3 px-1 md:px-2 rounded-md transition-colors hover:bg-gray-50/70">
       <div className="col-span-full md:col-span-3 flex items-center min-h-[40px]">
@@ -54,6 +58,7 @@ export function ProviderRow({
         <KeyInputField
           value={currentKey}
           onChange={onKeyChange}
+          placeholder={placeholder}
           isInvalid={isTrulyInvalid} // Only pass true for hard invalid
           isUnverified={isUnverifiedDueToCors} // Pass this, KeyInputField won't add aggressive styles
           feedbackMessage={validationMessage || undefined} // Tooltip for hard invalid icon

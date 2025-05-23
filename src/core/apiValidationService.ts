@@ -29,11 +29,12 @@ export async function validateApiKey(
         isCorsError: false, // Assuming OpenAI /models endpoint is generally CORS friendly from browser
       };
     case "claude":
-      const claudeResult = await validateClaudeApiKey(apiKey);
+      // Skip network call: browser validation disabled
       return {
-        isValid: claudeResult.success,
-        message: claudeResult.message,
-        isCorsError: claudeResult.isCorsError,
+        isValid: false,
+        message:
+          "Claude cannot be validated in the browser. Key saved; test with an API call.",
+        isCorsError: true,
       };
     case "gemini": // Add case for Gemini
       const geminiResult = await validateGeminiApiKey(apiKey);

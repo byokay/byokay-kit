@@ -8,10 +8,6 @@ export async function validateGrokApiKey(
 
   // As direct client-side validation for Grok is not established/reliable,
   // we treat it as an "unverifiable from browser" scenario.
-  console.warn(
-    "Grok API key validation from the browser is not currently supported or reliable. " +
-      "The key will be saved, but its validity cannot be checked client-side without a real API call."
-  );
 
   // Simulate a slight delay as if an attempt was made
   await new Promise((resolve) => setTimeout(resolve, 100));
