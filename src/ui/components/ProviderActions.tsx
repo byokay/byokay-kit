@@ -160,7 +160,7 @@ export function ProviderActions({
       {hasKey && (
         <button
           onClick={handleStartDelete}
-          className="p-1.5 rounded text-red-700 hover:text-red-800 bg-red-50 hover:bg-red-100 transition-all hover:scale-110 hover:shadow-sm"
+          className="p-1.5 rounded text-gray-500 hover:text-red-700 bg-gray-50 hover:bg-red-50 transition-all hover:scale-110 hover:shadow-sm"
           title="Remove key"
         >
           <svg
