@@ -52,10 +52,8 @@ export function ByokayKeyProvider({
       <Modal
         isOpen={showModal}
         onClose={closeModal}
-        title="Connect AI Providers"
-        // footer prop is removed, as KeyManagerContent now includes the footer actions.
-        // The Modal's main children area will contain KeyManagerContent,
-        // which in turn has the ProviderList and the action buttons at its bottom.
+        title="Link your AI accounts"
+        subtitle="Keys are stored only in your browser. For your security, avoid using shared devices or clear keys after."
       >
         <KeyManagerContent
           providers={providers}

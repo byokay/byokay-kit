@@ -5,6 +5,7 @@ interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   title: string;
+  subtitle?: string;
   children: React.ReactNode;
   footer?: React.ReactNode;
 }
@@ -13,6 +14,7 @@ export function Modal({
   isOpen,
   onClose,
   title,
+  subtitle,
   children,
   footer,
 }: ModalProps) {
@@ -28,11 +30,16 @@ export function Modal({
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="bg-blue-50 px-4 py-3 flex justify-between items-center border-b border-gray-200">
-          <h3 className="font-medium text-gray-800">{title}</h3>
+        <div className="bg-blue-50 px-4 py-3 flex justify-between border-b border-gray-200">
+          <div>
+            <h3 className="font-medium text-gray-800">{title}</h3>
+            {subtitle && (
+              <p className="text-xs text-gray-600 mt-1 max-w-sm">{subtitle}</p>
+            )}
+          </div>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 rounded-full p-1 hover:bg-gray-100 transition-colors"
+            className="text-gray-500 hover:text-gray-700 rounded-full p-1 hover:bg-gray-100 transition-colors flex-shrink-0"
             aria-label="Close"
           >
             <svg
