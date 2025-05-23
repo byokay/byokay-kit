@@ -101,6 +101,15 @@ async function callOpenAI() {
 
 ---
 
+## Example App
+
+Want to see Byokay Kit in action? Check out that simple frontend:
+
+- 🔗 **Repo:** https://github.com/marciob/byokay-frontend-example
+- 🚀 **Live demo:** https://byokay-frontend-example.vercel.app/
+
+---
+
 ## ⚠️ IMPORTANT: Security & Usage Guidelines
 
 **Please read this carefully.**
