@@ -1,3 +1,4 @@
+// src/ui/components/ProviderStatus.tsx
 import React, { useState } from "react";
 
 interface ProviderStatusProps {
@@ -5,7 +6,7 @@ interface ProviderStatusProps {
   isValidated: boolean;
   hasKey: boolean;
   isUnverified?: boolean;
-  unverifiedMessage?: string | null;
+  unverifiedMessage?: string | null; // Tooltip message for unverified state
 }
 
 export function ProviderStatus({
@@ -17,33 +18,28 @@ export function ProviderStatus({
 }: ProviderStatusProps) {
   const [showTooltip, setShowTooltip] = useState(false);
 
-  let statusColor = "text-gray-800"; // Default color
-  let dotElement: React.ReactNode = null;
-  let mainTooltipText = "";
+  let statusIndicator: React.ReactNode = null;
+  let tooltipContent: string | null = null;
+  let nameColorClass = "text-gray-800";
 
   if (hasKey && isValidated) {
-    statusColor = "text-green-600";
-    dotElement = (
-      <span
-        className="ml-1.5 inline-block w-2 h-2 bg-green-600 rounded-full cursor-help"
-        aria-label="API key connected and validated"
-      />
+    nameColorClass = "text-green-600";
+    statusIndicator = (
+      <span className="ml-1.5 inline-block w-2 h-2 bg-green-600 rounded-full" />
     );
-    mainTooltipText = "Connected and validated";
+    tooltipContent = "Connected and validated";
   } else if (hasKey && isUnverified) {
     // Key is present and saved, but couldn't be verified from browser (CORS)
-    // Keep name color neutral, but add an info icon with specific tooltip
-    statusColor = "text-gray-800"; // Neutral color for the name
-    dotElement = (
-      // Heroicon: information-circle
+    nameColorClass = "text-gray-700"; // Keep name color neutral or slightly different
+    statusIndicator = (
+      // Heroicon: information-circle (blue, less alarming than yellow)
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        className="ml-1.5 h-4 w-4 text-gray-500 inline-block cursor-help"
+        className="ml-1.5 h-4 w-4 text-blue-500 inline-block"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
         strokeWidth={2}
-        aria-label="Key saved, verification information"
       >
         <path
           strokeLinecap="round"
@@ -52,28 +48,22 @@ export function ProviderStatus({
         />
       </svg>
     );
-    mainTooltipText =
-      unverifiedMessage ||
-      "Key saved. This provider doesn't support automatic validation - verification will happen during your first API call.";
+    tooltipContent =
+      unverifiedMessage || "Saved. Browser verification may be limited.";
   }
-  // If !hasKey, or hasKey but !isValidated and !isUnverified, no special dot/icon.
 
   return (
-    <div className={`text-sm font-medium flex items-center ${statusColor}`}>
+    <div
+      className={`text-sm font-medium flex items-center ${nameColorClass} relative`}
+      onMouseEnter={() => statusIndicator && setShowTooltip(true)}
+      onMouseLeave={() => statusIndicator && setShowTooltip(false)}
+    >
       <span>{name}</span>
-      {dotElement && (
-        <div
-          className="inline-block relative"
-          onMouseEnter={() => setShowTooltip(true)}
-          onMouseLeave={() => setShowTooltip(false)}
-        >
-          {dotElement}
-          {showTooltip && mainTooltipText && (
-            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 w-max max-w-xs px-2 py-1 bg-gray-800 text-white text-xs rounded shadow-lg z-20">
-              {mainTooltipText}
-              <div className="absolute left-1/2 top-full transform -translate-x-1/2 w-2 h-2 bg-gray-800 rotate-45"></div>
-            </div>
-          )}
+      {statusIndicator}
+      {showTooltip && tooltipContent && (
+        <div className="absolute bottom-full left-0 transform -translate-y-1 mb-1 w-max max-w-xs px-2 py-1 bg-gray-800 text-white text-xs rounded shadow-lg z-30">
+          {tooltipContent}
+          <div className="absolute left-3 top-full w-2 h-2 bg-gray-800 transform rotate-45 -translate-y-1"></div>
         </div>
       )}
     </div>

@@ -5,7 +5,7 @@ interface ProviderActionsProps {
   isValidated: boolean;
   isSaved: boolean;
   isValidating: boolean;
-  isUnverified?: boolean; // For CORS unverified state
+  isUnverified?: boolean;
   onValidate: () => void;
   onClear: () => void;
 }
@@ -27,9 +27,6 @@ export function ProviderActions({
     onClear();
     setIsConfirmingDelete(false);
   };
-
-  const isTrulyInvalidAndKeyPresent =
-    hasKey && !isValidated && !isUnverified && !isValidating;
 
   if (isSaved) {
     return (
@@ -94,75 +91,79 @@ export function ProviderActions({
     );
   }
 
+  let validateButtonTitle = "Validate and save key";
+  let validateButtonIcon: React.ReactNode = // Default checkmark
+    (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-5 w-5 stroke-2 text-gray-500 group-hover:text-blue-600"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+      </svg>
+    );
+  let validateButtonClasses =
+    "text-gray-600 hover:text-blue-700 hover:bg-blue-50 focus-visible:ring-blue-500";
+
+  if (isValidated) {
+    validateButtonClasses =
+      "text-green-700 bg-green-50 hover:bg-green-100 focus-visible:ring-green-500";
+    validateButtonIcon = (
+      /* Green Check */
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-5 w-5 stroke-green-600 stroke-[2.5]"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+      </svg>
+    );
+    validateButtonTitle = "Key is validated and saved";
+  } else if (isUnverified) {
+    // Key saved, but unverified due to CORS
+    validateButtonClasses =
+      "text-blue-700 bg-blue-50 hover:bg-blue-100 focus-visible:ring-blue-500 cursor-default"; // Informative style, maybe less "actionable"
+    validateButtonIcon = (
+      /* Info Icon for unverified */
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-5 w-5 text-blue-600"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        strokeWidth={2}
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+        />
+      </svg>
+    );
+    validateButtonTitle =
+      "Saved. Browser verification skipped (CORS). Click to re-attempt if desired.";
+    // Note: onClick={onValidate} will still re-attempt, which is fine.
+  } else if (!hasKey) {
+    validateButtonClasses = "text-gray-400 cursor-not-allowed";
+    validateButtonTitle = "Enter a key to validate";
+  }
+  // If there's a validationMessage and it's not a CORS issue, it's a hard fail.
+  // The button might show an X, or revert to the default check to allow re-try.
+  // Current logic: if !isValidated and !isUnverified and hasKey, it's the default validate state.
+
   return (
     <>
       <button
         onClick={onValidate}
-        disabled={!hasKey || isValidating}
-        className={`p-1.5 rounded transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 ${
-          isValidated
-            ? "text-green-700 bg-green-50 hover:bg-green-100 focus-visible:ring-green-500"
-            : isUnverified // Key saved, but unverified due to CORS
-            ? "text-gray-600 bg-gray-50 hover:bg-gray-100 focus-visible:ring-gray-500" // Neutral style
-            : hasKey
-            ? "text-gray-600 hover:text-blue-700 hover:bg-blue-50 focus-visible:ring-blue-500"
-            : "text-gray-400 cursor-not-allowed"
-        }`}
-        title={
-          isValidated
-            ? "Key is validated and saved"
-            : isUnverified
-            ? "Key saved. Click to re-attempt verification."
-            : hasKey
-            ? "Validate and save key"
-            : "Enter a key to validate"
-        }
+        disabled={!hasKey || isValidating} // Still allow re-validating unverified keys
+        className={`p-1.5 rounded transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 ${validateButtonClasses}`}
+        title={validateButtonTitle}
       >
-        {isValidated ? ( // Green Check
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5 stroke-green-600 stroke-[2.5]"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M5 13l4 4L19 7"
-            />
-          </svg>
-        ) : isUnverified ? ( // Info Icon for unverified
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5 text-gray-600"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2}
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-        ) : (
-          // Default Check (not validated, not unverified)
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5 stroke-2 text-gray-500 group-hover:text-blue-600"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M5 13l4 4L19 7"
-            />
-          </svg>
-        )}
+        {validateButtonIcon}
       </button>
 
       {hasKey && (

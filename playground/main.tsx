@@ -18,7 +18,6 @@ const App = () => {
     "gemini",
     "grok",
     "deepseek",
-    "llama",
   ];
 
   // Styles for the custom button

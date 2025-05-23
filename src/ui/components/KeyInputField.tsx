@@ -6,8 +6,8 @@ interface KeyInputFieldProps {
   onChange: (value: string) => void;
   placeholder?: string;
   isInvalid?: boolean; // For actual invalid keys (e.g., 401 response)
-  isUnverified?: boolean; // For CORS unverified keys
-  feedbackMessage?: string; // For specific error/info messages
+  isUnverified?: boolean; // For CORS unverified keys - field should look normal
+  feedbackMessage?: string; // For specific error/info messages (mainly for isInvalid tooltip)
 }
 
 export function KeyInputField({
@@ -15,25 +15,24 @@ export function KeyInputField({
   onChange,
   placeholder = "Enter API key",
   isInvalid,
-  isUnverified,
+  isUnverified, // We acknowledge this prop but won't style input field aggressively for it
   feedbackMessage,
 }: KeyInputFieldProps) {
-  const [showTooltip, setShowTooltip] = useState(false);
-  const [showUnverifiedTooltip, setShowUnverifiedTooltip] = useState(false);
+  const [showErrorTooltip, setShowErrorTooltip] = useState(false);
   const [showKey, setShowKey] = useState(false);
 
   const toggleShowKey = () => setShowKey((prev) => !prev);
 
   let borderColor = "border-gray-300 focus:border-blue-500";
   let ringColor = "focus:ring-blue-500";
-  let statusIcon: React.ReactNode = null;
-  let statusIconTooltipText = feedbackMessage;
+  let errorIcon: React.ReactNode = null;
+  let errorTooltipText = feedbackMessage;
 
   if (isInvalid) {
-    // Hard invalid
+    // Only show aggressive error styling for hard invalid
     borderColor = "border-red-400 focus:border-red-500";
     ringColor = "focus:ring-red-500";
-    statusIcon = (
+    errorIcon = (
       /* Red X Circle Icon */
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -50,18 +49,12 @@ export function KeyInputField({
         />
       </svg>
     );
-    if (!statusIconTooltipText) statusIconTooltipText = "Invalid API Key.";
-  } else if (isUnverified) {
-    // For CORS unverified, we DON'T want an aggressive error icon or border here.
-    // The info icon will be next to the provider name in ProviderStatus.
-    // The input field can remain neutral or have a very subtle indication if desired.
-    // For now, let's keep it neutral to avoid "aggressive" warning.
-    // If you wanted a subtle indication here, it could be a different icon or just a tooltip on a generic icon.
-    // For now, no specific icon IN the input for isUnverified to keep it clean.
-    // The textual message below the input (in ProviderRow) will be the main indicator here.
+    if (!errorTooltipText) errorTooltipText = "Invalid API Key.";
   }
+  // No special border or icon inside input for isUnverified to keep it discreet.
+  // That info is now primarily on ProviderStatus.
 
-  const hasStatusIcon = !!statusIcon || !!isUnverified;
+  const hasErrorIcon = !!errorIcon;
   const hasValue = !!value;
 
   return (
@@ -73,23 +66,22 @@ export function KeyInputField({
         placeholder={placeholder}
         className={`w-full px-3 py-2 text-sm border rounded-lg focus:ring-1 focus:outline-none transition-all 
           ${borderColor} ${ringColor}
-          ${hasValue || hasStatusIcon ? "pr-10" : ""} 
+          ${hasValue || hasErrorIcon ? "pr-10" : ""} 
         `}
-        aria-invalid={isInvalid} // Only true for hard invalid
+        aria-invalid={isInvalid}
       />
 
-      {/* Eye toggle: Adjust position based on whether statusIcon is present */}
       {hasValue && (
         <button
           type="button"
           onClick={toggleShowKey}
           className={`absolute inset-y-0 ${
-            hasStatusIcon ? "right-8" : "right-0" // Shift left if status icon is present
+            hasErrorIcon ? "right-8" : "right-0"
           } pr-3 flex items-center text-gray-500 hover:text-gray-700 focus:outline-none`}
           title={showKey ? "Hide API key" : "Show API key"}
         >
           {showKey ? (
-            // Eye open icon
+            /* Eye open icon */
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-5 w-5"
@@ -111,7 +103,7 @@ export function KeyInputField({
               />
             </svg>
           ) : (
-            // Eye crossed icon
+            /* Eye crossed icon */
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-5 w-5"
@@ -130,48 +122,16 @@ export function KeyInputField({
         </button>
       )}
 
-      {/* Validation status icons */}
-      {/* Invalid Key Error Icon */}
-      {isInvalid && statusIcon && (
+      {isInvalid && errorIcon && (
         <div
           className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-help"
-          onMouseEnter={() => setShowTooltip(true)}
-          onMouseLeave={() => setShowTooltip(false)}
+          onMouseEnter={() => setShowErrorTooltip(true)}
+          onMouseLeave={() => setShowErrorTooltip(false)}
         >
-          {statusIcon}
-          {showTooltip && statusIconTooltipText && (
+          {errorIcon}
+          {showErrorTooltip && errorTooltipText && (
             <div className="absolute left-1/2 bottom-full transform -translate-x-1/2 mb-2 w-max max-w-xs px-3 py-1.5 bg-gray-800 text-white text-xs rounded-md shadow-lg z-20">
-              {statusIconTooltipText}
-              <div className="absolute left-1/2 top-full transform -translate-x-1/2 w-2 h-2 bg-gray-800 rotate-45"></div>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Unverified/CORS Info Icon */}
-      {hasValue && isUnverified && (
-        <div
-          className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-help"
-          onMouseEnter={() => setShowUnverifiedTooltip(true)}
-          onMouseLeave={() => setShowUnverifiedTooltip(false)}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5 text-gray-500"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2}
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-          {showUnverifiedTooltip && feedbackMessage && (
-            <div className="absolute left-1/2 bottom-full transform -translate-x-1/2 mb-2 w-max max-w-xs px-3 py-1.5 bg-gray-800 text-white text-xs rounded-md shadow-lg z-20">
-              {feedbackMessage}
+              {errorTooltipText}
               <div className="absolute left-1/2 top-full transform -translate-x-1/2 w-2 h-2 bg-gray-800 rotate-45"></div>
             </div>
           )}

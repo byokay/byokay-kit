@@ -179,7 +179,7 @@ async function callAI(prompt: string) {
 
 - `providers?: SupportedProvider[]`: (Optional) Array of provider IDs.
   - **Default: `["openai"]` if omitted.**
-  - Available types: `("openai" | "claude" | "gemini" | "grok" | "deepseek" | "llama")[]`
+  - Available types: `("openai" | "claude" | "gemini" | "grok" | "deepseek")[]`
 - `children: (openModal: () => void, hasAnyKey: boolean) => React.ReactNode;`: (**Required**) Function receiving:
   - `openModal: () => void`: Call to open the key management modal.
   - `hasAnyKey: boolean`: True if any configured provider has a validated key.

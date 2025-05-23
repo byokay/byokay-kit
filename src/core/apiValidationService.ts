@@ -1,9 +1,10 @@
 // src/core/apiValidationService.ts
-import { SupportedProvider } from "./ByokayKeyManager"; // Ensure this path and type name are correct
+import { SupportedProvider } from "./ByokayKeyManager"; // Ensure path is correct
 import { validateOpenAIApiKey } from "./validators/openaiValidator";
 import { validateClaudeApiKey } from "./validators/claudeValidator";
 import { validateGeminiApiKey } from "./validators/geminiValidator";
-import { validateDeepSeekApiKey } from "./validators/deepseekValidator"; // Import new validator
+import { validateDeepSeekApiKey } from "./validators/deepseekValidator";
+import { validateGrokApiKey } from "./validators/grokValidator"; // Import Grok validator
 // Import other validators as you create them:
 // import { validateGrokApiKey } from "./validators/grokValidator";
 
@@ -48,12 +49,23 @@ export async function validateApiKey(
         message: deepseekResult.message,
         isCorsError: deepseekResult.isCorsError,
       };
-    // Add cases for grok, llama as you implement them
+    case "grok": // Add Grok case
+      const grokResult = await validateGrokApiKey(apiKey);
+      return {
+        isValid: grokResult.success,
+        message: grokResult.message,
+        isCorsError: grokResult.isCorsError,
+      };
     default:
       console.warn(
-        `Real validation for ${provider} is not implemented. Simulating success for now.`
+        `Validation for ${provider} is not implemented. Key will be saved as unverified.`
       );
       await new Promise((resolve) => setTimeout(resolve, 500));
-      return { isValid: true, message: undefined, isCorsError: false }; // Simulate success
+      // For unhandled providers, treat as unverified and save.
+      return {
+        isValid: false, // Not API validated
+        message: `Validation for ${provider} is not implemented. Key saved; please test with an API call.`,
+        isCorsError: true, // Use this flag to trigger "save but unverified" UI
+      };
   }
 }

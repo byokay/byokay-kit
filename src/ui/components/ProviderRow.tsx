@@ -32,7 +32,6 @@ export function ProviderRow({
   onClear,
 }: ProviderRowProps) {
   const hasKey = Boolean(currentKey);
-  // isTrulyInvalid: there's a validation message, it's NOT a CORS issue, and it's not validated/validating
   const isTrulyInvalid =
     !!validationMessage &&
     !isUnverifiedDueToCors &&
@@ -42,14 +41,12 @@ export function ProviderRow({
   return (
     <div className="grid grid-cols-12 gap-x-2 gap-y-1 items-start py-3 px-1 md:px-2 rounded-md transition-colors hover:bg-gray-50/70">
       <div className="col-span-full md:col-span-3 flex items-center min-h-[40px]">
-        {" "}
-        {/* Adjusted min-height for consistency */}
         <ProviderStatus
           name={providerDisplayName}
           isValidated={isValidated}
           hasKey={hasKey}
           isUnverified={isUnverifiedDueToCors}
-          unverifiedMessage={isUnverifiedDueToCors ? validationMessage : null} // Pass message for tooltip
+          unverifiedMessage={isUnverifiedDueToCors ? validationMessage : null}
         />
       </div>
 
@@ -57,19 +54,14 @@ export function ProviderRow({
         <KeyInputField
           value={currentKey}
           onChange={onKeyChange}
-          isInvalid={isTrulyInvalid} // Only red border for true invalid
-          isUnverified={isUnverifiedDueToCors} // Pass this, but KeyInputField won't style border/icon aggressively for it
-          feedbackMessage={validationMessage || undefined} // For tooltip on actual error icon
+          isInvalid={isTrulyInvalid} // Only pass true for hard invalid
+          isUnverified={isUnverifiedDueToCors} // Pass this, KeyInputField won't add aggressive styles
+          feedbackMessage={validationMessage || undefined} // Tooltip for hard invalid icon
         />
-        {/* Only display validation message for actual errors, not for CORS issues */}
-        {validationMessage &&
-          !isValidated &&
-          !isValidating &&
-          !isUnverifiedDueToCors && (
-            <p className="text-xs mt-1 px-1 text-red-600">
-              {validationMessage}
-            </p>
-          )}
+        {/* Textual message: Only show for hard invalid, not for CORS unverified (as ProviderStatus handles that) */}
+        {isTrulyInvalid && validationMessage && (
+          <p className="text-xs text-red-600 mt-1 px-1">{validationMessage}</p>
+        )}
       </div>
 
       <div className="col-span-full md:col-span-2 flex items-center justify-end space-x-1 min-h-[40px]">
