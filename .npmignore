@@ -1,0 +1,9 @@
+# .npmignore
+*.tgz
+src
+playground
+postcss.config.js
+tailwind.config.js
+README.md
+*.md
+tsconfig.json

@@ -1,14 +1,17 @@
-# Byokay Kit 🔑
+# Byokay Kit
 
-A lightweight toolkit for your users to bring their own API keys (OpenAI, Claude, Gemini, etc.) and use them directly in your client-side application.
+Byokay Kit helps frontend applications **delegate AI API key management** to users, simplifying integrations with services like OpenAI, Claude, and Gemini.
+
+Currently, it enables users to **securely store and manage their own API keys locally** in the browser, in a "bring your own key - BYOK" manner, eliminating the need for backend infrastructure to handle AI service credentials.
 
 ---
 
 ## Core Idea
 
-1.  **User Provides Keys:** Your users input their API keys through a UI provided by this kit.
-2.  **Client-Side Storage:** Keys are stored directly in the user's browser **`localStorage`**.
-3.  **Direct Usage:** Your frontend application can then retrieve and use these keys for making API calls from the client-side.
+1. **User-managed keys**: Users connect and manage their own AI service API keys via a simple UI.
+2. **Client-side storage**: Keys are stored **locally** in the user's browser (`localStorage`), scoped to your domain.
+3. **Frontend-first**: Simplifies your application — no need to proxy or store API keys on your backend.
+4. **Customizable integration**: Add a “Connect AI” button with your preferred design.
 
 ---
 
@@ -22,16 +25,13 @@ yarn add byokay-kit
 
 ---
 
-## Quick Frontend Implementation
+## Quick Start
 
 **1. Import Necessary Parts:**
 
 ```tsx
-// In your React component (e.g., App.tsx or a settings page)
 import React from "react";
-// Assuming ByokayKey is also exported from your package root for direct use
 import { ByokayKeyProvider, SupportedProvider, ByokayKey } from "byokay-kit";
-import "byokay-kit/dist/styles.css"; // Path to the library's CSS
 ```
 
 **2. Use `ByokayKeyProvider` with Your Custom Trigger:**
@@ -41,7 +41,6 @@ import "byokay-kit/dist/styles.css"; // Path to the library's CSS
 ```tsx
 // ExampleComponent.tsx
 // (Ensure you import React, ByokayKeyProvider, SupportedProvider from 'byokay-kit'
-// and 'byokay-kit/dist/styles.css' as shown in Step 1)
 
 const ExampleComponent = () => {
   // Define which AI providers you want this instance to support
@@ -98,7 +97,7 @@ async function callAI(prompt: string) {
     console.log("Attempting to use OpenAI key...");
     try {
       const response = await fetch(
-        "[https://api.openai.com/v1/chat/completions](https://api.openai.com/v1/chat/completions)",
+        "https://api.openai.com/v1/chat/completions",
         {
           method: "POST",
           headers: {
@@ -122,7 +121,7 @@ async function callAI(prompt: string) {
       console.error("Error calling OpenAI:", error);
     }
   } else {
-    alert('OpenAI key not set. Please use "Connect Keys" to set it.');
+    alert('OpenAI key not set. Please use "Connect AI" to set it.');
   }
 
   // You could similarly use apiKeys.deepseek if present
