@@ -65,12 +65,11 @@ export async function validateClaudeApiKey(
       console.warn(
         "CORS issue suspected for Anthropic /v1/models direct browser call."
       );
-      // For Claude, we'll consider CORS issues as successful validation but flag for the UI
       return {
-        success: true, // Treat as success so no error message appears
-        isCorsError: true, // Still flag as CORS issue for the tooltip
+        success: false, // CRITICAL FIX: Validation was not successful
+        isCorsError: true,
         message:
-          "Anthropic (Claude) doesn't allow API validation from browsers. Your key has been saved and will be used for API calls.",
+          "Claude API doesn't allow browser-based validation. Your key has been saved.", // Simple informative message
       };
     }
     return {
