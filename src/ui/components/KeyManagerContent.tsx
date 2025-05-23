@@ -12,6 +12,7 @@ interface KeyManagerContentProps {
   validating: Record<SupportedProvider, boolean>;
   validated: Record<SupportedProvider, boolean>;
   validationMessages: Record<SupportedProvider, string | null>;
+  isUnverifiedDueToCors: Record<SupportedProvider, boolean>;
   onKeyChange: (provider: SupportedProvider, value: string) => void;
   onValidate: (provider: SupportedProvider, key: string) => void;
   onClear: (provider: SupportedProvider) => void;
@@ -28,6 +29,7 @@ export function KeyManagerContent({
   validating,
   validated,
   validationMessages,
+  isUnverifiedDueToCors,
   onKeyChange,
   onValidate,
   onClear,
@@ -62,6 +64,7 @@ export function KeyManagerContent({
           validating={validating}
           validated={validated}
           validationMessages={validationMessages}
+          isUnverifiedDueToCors={isUnverifiedDueToCors}
           onKeyChange={onKeyChange}
           onValidate={onValidate}
           onClear={onClear}

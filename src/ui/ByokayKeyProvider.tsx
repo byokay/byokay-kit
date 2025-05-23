@@ -26,7 +26,8 @@ export function ByokayKeyProvider({
     saved,
     validating,
     validated,
-    validationMessages, // Make sure this is from your hook if you added it
+    validationMessages,
+    isUnverifiedDueToCors,
     handleKeyChange,
     handleClear,
     handleClearAll,
@@ -63,7 +64,8 @@ export function ByokayKeyProvider({
           saved={saved}
           validating={validating}
           validated={validated}
-          validationMessages={validationMessages || {}} // Pass down, ensure default if not in hook yet
+          validationMessages={validationMessages || {}}
+          isUnverifiedDueToCors={isUnverifiedDueToCors}
           onKeyChange={handleKeyChange}
           onValidate={handleValidate}
           onClear={handleClear}

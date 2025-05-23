@@ -32,10 +32,9 @@ export function ProviderStatus({
     // Key is present and saved, but couldn't be verified from browser (CORS)
     nameColorClass = "text-gray-700"; // Keep name color neutral or slightly different
     statusIndicator = (
-      // Heroicon: information-circle (blue, less alarming than yellow)
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        className="ml-1.5 h-4 w-4 text-blue-500 inline-block"
+        className="ml-1.5 h-4 w-4 text-blue-500 flex-shrink-0"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -54,11 +53,11 @@ export function ProviderStatus({
 
   return (
     <div
-      className={`text-sm font-medium flex items-center ${nameColorClass} relative`}
+      className={`text-sm font-medium flex items-start ${nameColorClass} relative`}
       onMouseEnter={() => statusIndicator && setShowTooltip(true)}
       onMouseLeave={() => statusIndicator && setShowTooltip(false)}
     >
-      <span>{name}</span>
+      <span className="whitespace-normal break-words">{name}</span>
       {statusIndicator}
       {showTooltip && tooltipContent && (
         <div className="absolute bottom-full left-0 transform -translate-y-1 mb-1 w-max max-w-xs px-2 py-1 bg-gray-800 text-white text-xs rounded shadow-lg z-30">

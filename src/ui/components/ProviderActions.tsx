@@ -123,30 +123,21 @@ export function ProviderActions({
       </svg>
     );
     validateButtonTitle = "Key is validated and saved";
-  } else if (isUnverified) {
-    // Key saved, but unverified due to CORS
-    validateButtonClasses =
-      "text-blue-700 bg-blue-50 hover:bg-blue-100 focus-visible:ring-blue-500 cursor-default"; // Informative style, maybe less "actionable"
+
+    /* Key saved but unverified (CORS)  → grey, disabled check */
+    validateButtonClasses = "text-gray-400 cursor-default";
     validateButtonIcon = (
-      /* Info Icon for unverified */
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        className="h-5 w-5 text-blue-600"
+        className="h-4 w-4 stroke-[2]"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
-        strokeWidth={2}
       >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-        />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
       </svg>
     );
-    validateButtonTitle =
-      "Saved. Browser verification skipped (CORS). Click to re-attempt if desired.";
-    // Note: onClick={onValidate} will still re-attempt, which is fine.
+    validateButtonTitle = "Key saved. Browser verification not possible.";
   } else if (!hasKey) {
     validateButtonClasses = "text-gray-400 cursor-not-allowed";
     validateButtonTitle = "Enter a key to validate";
@@ -159,7 +150,7 @@ export function ProviderActions({
     <>
       <button
         onClick={onValidate}
-        disabled={!hasKey || isValidating} // Still allow re-validating unverified keys
+        disabled={!hasKey || isValidating || isUnverified} // prevent click if unverified
         className={`p-1.5 rounded transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 ${validateButtonClasses}`}
         title={validateButtonTitle}
       >

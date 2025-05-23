@@ -10,7 +10,8 @@ interface ProviderListProps {
   saved: Record<SupportedProvider, boolean>;
   validating: Record<SupportedProvider, boolean>;
   validated: Record<SupportedProvider, boolean>;
-  validationMessages: Record<SupportedProvider, string | null>; // New prop
+  validationMessages: Record<SupportedProvider, string | null>;
+  isUnverifiedDueToCors: Record<SupportedProvider, boolean>;
   onKeyChange: (provider: SupportedProvider, value: string) => void;
   onValidate: (provider: SupportedProvider, key: string) => void;
   onClear: (provider: SupportedProvider) => void;
@@ -23,7 +24,8 @@ export function ProviderList({
   saved,
   validating,
   validated,
-  validationMessages, // Use this
+  validationMessages,
+  isUnverifiedDueToCors,
   onKeyChange,
   onValidate,
   onClear,
@@ -47,6 +49,7 @@ export function ProviderList({
             isSaved={saved[provider] || false}
             isValidating={validating[provider] || false}
             isValidated={validated[provider] || false}
+            isUnverifiedDueToCors={isUnverifiedDueToCors[provider] || false}
             validationMessage={validationMessages[provider]} // Pass down the message
             onKeyChange={(value) => onKeyChange(provider, value)}
             onValidate={() => onValidate(provider, keys[provider] || "")}
