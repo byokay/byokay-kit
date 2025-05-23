@@ -16,7 +16,7 @@ This eliminates the need for your app to manage sensitive credentials or maintai
 
 ## Live Demo
 
-![Byokay Kit Demo](assets/demo.mp4)
+![Byokay Kit Demo](assets/demo.gif)
 
 ## Supported Providers
 
